@@ -1,0 +1,21 @@
+services:
+    postgres:
+        image: "postgres"
+        environment:
+            POSTGRES_USER: "localhost"
+            POSTGRES_PASSWORD: "localhost"
+            POSTGRES_DB: "localhost"
+        ports:
+            - "5432:5432"
+        volumes:
+            - "./temp/postgres_data:/var/lib/postgresql/data"
+
+    pgadmin:
+        image: "dpage/pgadmin4"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "email@email.com"
+            PGADMIN_DEFAULT_PASSWORD: "donatas"
+        ports:
+            - "82:80"
+        volumes:
+            - "./temp/pgadmin_data:/var/lib/pgadmin"

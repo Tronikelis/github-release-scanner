@@ -1,0 +1,22 @@
+meta {
+  name: Create repository
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3001/v1/repository/add
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "oven-sh/bun"
+  }
+}

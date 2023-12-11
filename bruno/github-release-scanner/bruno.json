@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "github-release-scanner",
+  "type": "collection",
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "http://localhost:3001/v1"
+  }
+}
