@@ -1,6 +1,6 @@
 import useSWR, { Options } from "solid-swr";
 
-import { GetRepositoryItemsRes } from "~/types/api/response";
+import { GetRepositoryItemsRes } from "~/types/api";
 
 export function useRepositories(options?: Options<GetRepositoryItemsRes, unknown>) {
     const swr = useSWR<GetRepositoryItemsRes>(
