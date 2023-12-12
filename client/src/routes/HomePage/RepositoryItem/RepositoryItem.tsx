@@ -13,6 +13,7 @@ type Props = {
     createdAt: string;
     totalPositives: number;
     isVtFinished: boolean;
+    releaseAssetCount: number;
 };
 
 const RepositoryItem: VoidComponent<Props> = props => {
@@ -30,10 +31,11 @@ const RepositoryItem: VoidComponent<Props> = props => {
                 <Group>
                     <Text size="xl">
                         <Switch fallback="⏳">
+                            <Match when={props.releaseAssetCount === 0}>😶</Match>
+                            <Match when={props.totalPositives > 0}>❌</Match>
                             <Match when={props.isVtFinished && props.totalPositives === 0}>
                                 ✅
                             </Match>
-                            <Match when={props.totalPositives > 0}>❌</Match>
                         </Switch>
                     </Text>
                     <Text size="xl">{props.releaseName}</Text>

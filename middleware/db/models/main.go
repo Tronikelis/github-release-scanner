@@ -12,8 +12,8 @@ type ReleaseAsset struct {
 	Name string `gorm:"not null; default:null"`
 	Size uint   `gorm:"not null; default:null"`
 
-	Positives  uint
-	VtLink     string `gorm:"unique"`
+	Positives  uint   `gorm:"default:null"`
+	VtLink     string `gorm:"unique; default:null"`
 	VtFinished bool   `gorm:"not null; default:false"`
 
 	Release   *Release `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

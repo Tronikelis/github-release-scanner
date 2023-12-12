@@ -32,6 +32,8 @@ func main() {
 		e.Use(middleware.Recover())
 	}
 
+	e.Use(middleware.CORS())
+
 	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
 		Skipper:      middleware.DefaultSkipper,
 		ErrorMessage: "rate limits were reached, please try again in an hour",

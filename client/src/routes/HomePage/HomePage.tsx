@@ -17,17 +17,18 @@ const HomePage: VoidComponent = () => {
                 <For each={data()?.Rows}>
                     {item => (
                         <RepositoryItem
-                            isVtFinished={item.Releases.every(item =>
-                                item.ReleaseAssets.every(item => item.VtFinished)
-                            )}
-                            totalPositives={item.Releases.reduce(
-                                (prev, acc) =>
-                                    acc.ReleaseAssets.reduce(
-                                        (prev, acc) => (acc.Positives ?? 0) + prev,
-                                        0
-                                    ) + prev,
-                                0
-                            )}
+                            releaseAssetCount={item.Releases[0]?.ReleaseAssets.length ?? 0}
+                            isVtFinished={
+                                item.Releases[0]?.ReleaseAssets.every(
+                                    item => item.VtFinished
+                                ) ?? false
+                            }
+                            totalPositives={
+                                item.Releases[0]?.ReleaseAssets.reduce(
+                                    (prev, acc) => (acc.Positives ?? 0) + prev,
+                                    0
+                                ) ?? 0
+                            }
                             name={item.Name}
                             createdAt={item.CreatedAt}
                             description={item.Description || ""}
