@@ -1,9 +1,14 @@
-import { render } from "solid-js/web";
+import React from "react";
+import { createRoot } from "react-dom/client";
 
 import Root from "./components/Root";
 
 import "../main.css";
 
-const root = document.getElementById("solid-root") as HTMLDivElement;
+const root = createRoot(document.getElementById("react-root")!);
 
-render(() => <Root />, root);
+root.render(
+    <React.StrictMode>
+        <Root />
+    </React.StrictMode>
+);

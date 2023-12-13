@@ -1,7 +1,7 @@
-import { Match, Switch, VoidComponent } from "solid-js";
+import { Card, CardBody } from "@nextui-org/react";
+import React from "react";
 
-import Group from "~/components/Group";
-import Paper from "~/components/Paper";
+import Group from "~/components/Group/Group";
 import Stack from "~/components/Stack";
 import Text from "~/components/Text";
 
@@ -16,26 +16,36 @@ type Props = {
     releaseAssetCount: number;
 };
 
-const RepositoryItem: VoidComponent<Props> = props => {
-    return (
-        <Paper>
-            <Stack class="gap-2">
-                <Text>{props.name}</Text>
+const RepositoryItem = ({
+    createdAt,
+    description,
+    isVtFinished,
+    name,
+    releaseAssetCount,
+    releaseName,
+    stars,
+    totalPositives,
+}: Props) => {
+    const renderStatus = () => {
+        if (releaseAssetCount === 0) return "😶";
+        if (totalPositives > 0) return "❌";
+        if (isVtFinished && totalPositives === 0) return "✅";
+        return "⏳";
+    };
 
-                <Group>
-                    <Text size="xl">
-                        <Switch fallback="⏳">
-                            <Match when={props.releaseAssetCount === 0}>😶</Match>
-                            <Match when={props.totalPositives > 0}>❌</Match>
-                            <Match when={props.isVtFinished && props.totalPositives === 0}>
-                                ✅
-                            </Match>
-                        </Switch>
-                    </Text>
-                    <Text size="xl">{props.releaseName}</Text>
-                </Group>
-            </Stack>
-        </Paper>
+    return (
+        <Card>
+            <CardBody>
+                <Stack className="gap-2">
+                    <Text>{name}</Text>
+
+                    <Group className="gap-2">
+                        <Text size="large">{renderStatus()}</Text>
+                        <Text size="large">{releaseName}</Text>
+                    </Group>
+                </Stack>
+            </CardBody>
+        </Card>
     );
 };
 

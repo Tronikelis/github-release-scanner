@@ -10,7 +10,6 @@
         "moduleResolution": "bundler",
         "isolatedModules": true,
         "jsx": "preserve",
-        "jsxImportSource": "solid-js",
 
         "noEmit": true,
 
