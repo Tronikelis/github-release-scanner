@@ -1,18 +1,14 @@
-import { Accessor } from "solid-js";
-import useSWR, { Options } from "solid-swr";
+import useSWR, { SWRConfiguration } from "swr";
 import urlbat from "urlbat";
 
 import { GetGithubRepositoriesQuery, GetGithubRepositoriesRes } from "~/types/api";
-import { getApiBaseUrl } from "~/utils";
 
 export function useGithubRepositories(
-    query: Accessor<GetGithubRepositoriesQuery | undefined>,
-    options?: Options<GetGithubRepositoriesRes, unknown>
+    query: GetGithubRepositoriesQuery | undefined,
+    options?: SWRConfiguration
 ) {
-    const key = () => {
-        return urlbat(`${getApiBaseUrl()}/github/repository/search`, query() || {});
-    };
+    const key = urlbat("/github/repository/search", query || {});
 
-    const swr = useSWR(key, options);
+    const swr = useSWR<GetGithubRepositoriesRes>(key, options);
     return swr;
 }
