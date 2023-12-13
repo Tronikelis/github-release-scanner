@@ -18,6 +18,8 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedIndexedAccess": true,
 
+        "types": ["vite/client"],
+
         "paths": {
             "~/*": ["./src/*"]
         }
