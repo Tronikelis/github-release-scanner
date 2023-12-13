@@ -39,7 +39,7 @@ const RepositoryItem = ({
                 <Stack className="gap-2">
                     <Text>{name}</Text>
 
-                    <Group>
+                    <Group className="gap-2">
                         <Text size="large">{renderStatus()}</Text>
                         <Text size="large">{releaseName}</Text>
                     </Group>
