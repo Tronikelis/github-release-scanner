@@ -13,7 +13,7 @@ const HomePage: VoidComponent = () => {
 
     return (
         <Container>
-            <Stack class="gap-8">
+            <Stack class="gap-8 grid grid-cols-2 lg:grid-cols-4">
                 <For each={data()?.Rows}>
                     {item => (
                         <RepositoryItem

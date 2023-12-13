@@ -20,13 +20,7 @@ const RepositoryItem: VoidComponent<Props> = props => {
     return (
         <Paper>
             <Stack class="gap-2">
-                <Group class="gap-2">
-                    <Text>{props.name}</Text>
-                    <Text>•</Text>
-                    <Text isDimmed size="sm">
-                        {props.description}
-                    </Text>
-                </Group>
+                <Text>{props.name}</Text>
 
                 <Group>
                     <Text size="xl">
