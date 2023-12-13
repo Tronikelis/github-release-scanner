@@ -1,6 +1,7 @@
 package virustotal_api_client
 
 import (
+	"errors"
 	"github-release-scanner/utils/time_queue"
 	"log"
 	"os"
@@ -37,6 +38,9 @@ func (client VirusTotalApiClient) getUploadUrl() (*string, error) {
 	resp, err := grequests.Get(client.baseUrl+"/files/upload_url", &grequests.RequestOptions{
 		Headers: client.headers,
 	})
+	if !resp.Ok {
+		return nil, errors.New(resp.String())
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +73,9 @@ func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
 		}},
 		Headers: client.headers,
 	})
+	if !resp.Ok {
+		return nil, errors.New(resp.String())
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +91,9 @@ func (client VirusTotalApiClient) CheckAnalysis(analysisID string) (uint, bool, 
 	resp, err := grequests.Get(client.baseUrl+"/analyses/"+analysisID, &grequests.RequestOptions{
 		Headers: client.headers,
 	})
+	if !resp.Ok {
+		return 0, false, errors.New(resp.String())
+	}
 	if err != nil {
 		return 0, false, err
 	}

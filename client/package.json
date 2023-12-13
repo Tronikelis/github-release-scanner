@@ -10,7 +10,8 @@
         "@solidjs/router": "0.10.1",
         "solid-js": "1.8.7",
         "solid-swr": "1.0.3",
-        "tailwind-variants": "0.1.18"
+        "tailwind-variants": "0.1.18",
+        "urlbat": "4.1.0"
     },
     "engines": {
         "node": "20"

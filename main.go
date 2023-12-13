@@ -24,6 +24,7 @@ func main() {
 	isProd := os.Getenv("APP_ENV") == "production"
 
 	e := echo.New()
+	e.Debug = true
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

@@ -1,8 +1,10 @@
 package github_api_client
 
 import (
+	"errors"
 	"github-release-scanner/utils/time_queue"
 	"log"
+	"net/url"
 	"os"
 	"time"
 
@@ -38,6 +40,9 @@ func (client GithubApiClient) GetRepo(fullName string) (*GetRepoJSON, error) {
 	response, err := grequests.Get(client.baseUrl+"/repos/"+fullName, &grequests.RequestOptions{
 		Headers: client.headers,
 	})
+	if !response.Ok {
+		return nil, errors.New(response.String())
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -57,11 +62,44 @@ func (client GithubApiClient) GetRepoReleases(fullName string) (*[]GetRepoReleas
 	response, err := grequests.Get(client.baseUrl+"/repos/"+fullName+"/releases", &grequests.RequestOptions{
 		Headers: client.headers,
 	})
+	if !response.Ok {
+		return nil, errors.New(response.String())
+	}
 	if err != nil {
 		return nil, err
 	}
 
 	data := &[]GetRepoReleasesJSON{}
+
+	if err := response.JSON(data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (client GithubApiClient) GetRepos(name string) (*GetReposJSON, error) {
+	client.throttle.TryAndWait()
+
+	params := url.Values{}
+	params.Set("q", name)
+
+	querystring := params.Encode()
+	if querystring != "" {
+		querystring = "?" + querystring
+	}
+
+	response, err := grequests.Get(client.baseUrl+"/search/repositories"+querystring, &grequests.RequestOptions{
+		Headers: client.headers,
+	})
+	if !response.Ok {
+		return nil, errors.New(response.String())
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	data := &GetReposJSON{}
 
 	if err := response.JSON(data); err != nil {
 		return nil, err
