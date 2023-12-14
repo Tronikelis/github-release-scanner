@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react";
+import { ComponentProps, FlowComponent, Show, splitProps } from "solid-js";
 import { tv, VariantProps } from "tailwind-variants";
 
 const text = tv({
@@ -11,12 +11,12 @@ const text = tv({
             true: "italic",
         },
         isDimmed: {
-            true: "text-default-500",
+            true: "text-gray-400",
         },
         size: {
-            tiny: "text-tiny",
-            small: "text-small",
-            large: "text-large",
+            sm: "text-sm",
+            lg: "text-lg",
+            xl: "text-xl",
         },
     },
 });
@@ -26,21 +26,32 @@ type Props = {
 } & (ComponentProps<"p"> | ComponentProps<"span">) &
     VariantProps<typeof text>;
 
-const Text = ({ isSpan, isBold, isItalic, isDimmed, size, className, ...others }: Props) => {
-    const tv = {
-        isSpan,
-        isBold,
-        isItalic,
-        isDimmed,
-        size,
-        className,
-    };
+const Text: FlowComponent<Props> = props => {
+    const [local, others] = splitProps(props, [
+        "class",
+        "isSpan",
+        "isBold",
+        "isItalic",
+        "isDimmed",
+        "size",
+    ]);
 
-    if (isSpan) {
-        return <span className={text(tv)} {...others} />;
-    }
+    const tv = (): Parameters<typeof text>[number] => ({
+        class: local.class,
+        isBold: local.isBold,
+        isItalic: local.isItalic,
+        isDimmed: local.isDimmed,
+        size: local.size,
+    });
 
-    return <p className={text(tv)} {...(others as ComponentProps<"p">)} />;
+    return (
+        <Show
+            when={local.isSpan}
+            fallback={<p class={text(tv())} {...(others as ComponentProps<"p">)} />}
+        >
+            <span class={text(tv())} {...(others as ComponentProps<"span">)} />
+        </Show>
+    );
 };
 
 export default Text;

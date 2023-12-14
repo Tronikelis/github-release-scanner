@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react";
+import { ComponentProps, FlowComponent, splitProps } from "solid-js";
 import { tv, VariantProps } from "tailwind-variants";
 
 const group = tv({
@@ -7,8 +7,10 @@ const group = tv({
 
 type Props = ComponentProps<"div"> & VariantProps<typeof group>;
 
-const Group = ({ className, ...others }: Props) => {
-    return <div className={group({ className })} {...others} />;
+const Group: FlowComponent<Props> = props => {
+    const [local, others] = splitProps(props, ["class"]);
+
+    return <div class={group({ class: local.class })} {...others} />;
 };
 
 export default Group;

@@ -1,5 +1,5 @@
 module.exports = {
-    extends: "tronikelis-react",
+    extends: "tronikelis-solid",
     parserOptions: {
         tsconfigRootDir: __dirname,
         project: ["./tsconfig.json"],

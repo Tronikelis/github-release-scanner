@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react";
+import { ComponentProps, FlowComponent, splitProps } from "solid-js";
 import { tv, VariantProps } from "tailwind-variants";
 
 const stack = tv({
@@ -7,8 +7,10 @@ const stack = tv({
 
 type Props = ComponentProps<"div"> & VariantProps<typeof stack>;
 
-const Stack = ({ className, ...others }: Props) => {
-    return <div className={stack({ className })} {...others} />;
+const Stack: FlowComponent<Props> = props => {
+    const [local, others] = splitProps(props, ["class"]);
+
+    return <div class={stack({ class: local.class })} {...others} />;
 };
 
 export default Stack;

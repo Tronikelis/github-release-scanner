@@ -1,7 +1,7 @@
-import vitePluginReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import solidPlugin from "vite-plugin-solid";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-    plugins: [vitePluginReact(), tsconfigPaths()],
+    plugins: [solidPlugin(), tsconfigPaths()],
 });
