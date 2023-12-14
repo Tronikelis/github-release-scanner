@@ -1,6 +1,7 @@
 import { For, VoidComponent } from "solid-js";
 
 import Container from "~/components/Container";
+import Group from "~/components/Group";
 import Stack from "~/components/Stack";
 import { useRepositories } from "~/hooks/swr/repository";
 
@@ -15,7 +16,9 @@ const HomePage: VoidComponent = () => {
     return (
         <Container>
             <Stack>
-                <AddRepository />
+                <Group class="justify-end">
+                    <AddRepository />
+                </Group>
 
                 <Stack class="gap-8 grid grid-cols-2 lg:grid-cols-4">
                     <For each={data()?.Rows}>

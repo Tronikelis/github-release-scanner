@@ -6,7 +6,9 @@ const button = tv({
         "hover:bg-blue-500 bg-blue-600",
         "focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80",
         "capitalize transition-colors duration-300 transform",
-        "rounded-lg font-medium tracking-wide text-white ",
+        "rounded-lg font-medium tracking-wide text-white",
+        "py-2 px-4",
+        "disabled:opacity-40 disabled:cursor-not-allowed",
     ],
 });
 

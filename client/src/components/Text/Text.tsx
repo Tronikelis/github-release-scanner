@@ -13,6 +13,9 @@ const text = tv({
         isDimmed: {
             true: "text-gray-400",
         },
+        isTruncated: {
+            true: "truncate",
+        },
         size: {
             sm: "text-sm",
             lg: "text-lg",
@@ -33,6 +36,7 @@ const Text: FlowComponent<Props> = props => {
         "isBold",
         "isItalic",
         "isDimmed",
+        "isTruncated",
         "size",
     ]);
 
@@ -41,6 +45,7 @@ const Text: FlowComponent<Props> = props => {
         isBold: local.isBold,
         isItalic: local.isItalic,
         isDimmed: local.isDimmed,
+        isTruncated: local.isTruncated,
         size: local.size,
     });
 

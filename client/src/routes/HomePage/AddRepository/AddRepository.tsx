@@ -1,16 +1,36 @@
-import { VoidComponent } from "solid-js";
+import { createSignal, VoidComponent } from "solid-js";
+import toast from "solid-toast";
 
 import Button from "~/components/Button";
-import Dropdown from "~/components/Dropdown";
+import Group from "~/components/Group";
+import TextInput from "~/components/TextInput";
+import { useRepositoriesMutation } from "~/hooks/swr/repository";
 
 const AddRepository: VoidComponent = () => {
-    let ref: HTMLButtonElement | undefined;
+    const [repoName, setRepoName] = createSignal("");
+
+    const { add } = useRepositoriesMutation();
+
+    const handleAdd = async () => {
+        try {
+            await add.trigger({ name: repoName() });
+            add.populateCache();
+        } catch (err: unknown) {
+            toast.error(JSON.stringify(err));
+        }
+    };
 
     return (
-        <>
-            <Button ref={ref}>Hello</Button>
-            <Dropdown targetRef={() => ref}>Hello guys</Dropdown>
-        </>
+        <Group>
+            <TextInput
+                placeholder="Repository"
+                value={repoName()}
+                onInput={e => setRepoName(e.target.value)}
+            />
+            <Button disabled={add.isTriggering()} onClick={handleAdd}>
+                Add
+            </Button>
+        </Group>
     );
 };
 

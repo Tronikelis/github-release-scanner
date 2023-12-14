@@ -20,7 +20,7 @@ const RepositoryItem: VoidComponent<Props> = props => {
     return (
         <Paper>
             <Stack class="gap-2">
-                <Text>{props.name}</Text>
+                <Text isTruncated>{props.name}</Text>
 
                 <Group>
                     <Text size="xl">
