@@ -7,7 +7,11 @@
         "build": "vite build"
     },
     "dependencies": {
+        "@floating-ui/dom": "1.5.3",
+        "@solid-primitives/event-listener": "^2.3.0",
+        "@solid-primitives/refs": "^1.0.5",
         "@solidjs/router": "0.10.1",
+        "clsx": "^2.0.0",
         "solid-js": "1.8.7",
         "solid-swr": "1.0.3",
         "tailwind-variants": "0.1.18",
