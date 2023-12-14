@@ -3,7 +3,7 @@ import { tv, VariantProps } from "tailwind-variants";
 
 const container = tv({
     slots: {
-        base: "w-screen flex items-center justify-center my-12 px-4",
+        base: "w-full flex items-center justify-center my-12 px-4",
         inner: "container",
     },
 });

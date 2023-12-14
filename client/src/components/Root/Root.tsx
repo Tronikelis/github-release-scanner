@@ -6,6 +6,8 @@ import toast, { Toaster } from "solid-toast";
 import { axios } from "~/classes/Axios";
 import HomePage from "~/routes/HomePage";
 
+import Container from "../Container";
+
 const Root: VoidComponent = () => {
     return (
         <SWROptionsProvider
@@ -15,9 +17,11 @@ const Root: VoidComponent = () => {
             }}
         >
             <Toaster />
-            <Router>
-                <Route path="/" component={HomePage} />
-            </Router>
+            <Container>
+                <Router>
+                    <Route path="/" component={HomePage} />
+                </Router>
+            </Container>
         </SWROptionsProvider>
     );
 };
