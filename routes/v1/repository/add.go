@@ -1,6 +1,7 @@
 package repository
 
 import (
+	ctx "context"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
 	"net/http"
@@ -13,7 +14,8 @@ type RequestBody struct {
 }
 
 func Add(c echo.Context) error {
-	gorm := c.(*context.Context).Gorm
+	ctx := ctx.Background()
+	db := c.(*context.Context).DB
 	apiClients := c.(*context.Context).ApiClients
 
 	requestBody := RequestBody{}
@@ -33,7 +35,7 @@ func Add(c echo.Context) error {
 		Stars:       uint(rawRepo.StargazersCount),
 	}
 
-	if err := gorm.Create(&repo).Error; err != nil {
+	if _, err := db.NewInsert().Model(&repo).Exec(ctx); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

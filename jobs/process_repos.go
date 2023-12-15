@@ -1,23 +1,27 @@
 package jobs
 
 import (
+	ctx "context"
 	"fmt"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
-	"log"
+	"math"
 	"os"
 	"path"
 	"time"
 
 	"github.com/levigross/grequests"
-	"gorm.io/gorm"
+	"github.com/uptrace/bun"
 )
 
-func checkVirusTotalPositives(analysisID string, gorm *gorm.DB, apiClients *context.ApiClients) {
+func checkVirusTotalPositives(analysisID string, db *bun.DB, apiClients *context.ApiClients) {
+	ctx := ctx.Background()
+
 	for {
 		positives, finished, err := apiClients.VtClient.CheckAnalysis(analysisID)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			return
 		}
 
 		if !finished {
@@ -25,13 +29,14 @@ func checkVirusTotalPositives(analysisID string, gorm *gorm.DB, apiClients *cont
 			continue
 		}
 
-		gorm.
-			Model(&models.ReleaseAsset{}).
+		if _, err := db.NewUpdate().Model(models.ReleaseAsset{}).
+			Set("positives = ?", positives).
+			Set("vt_finished = true").
 			Where("vt_link LIKE ?", "%"+analysisID+"%").
-			Updates(models.ReleaseAsset{
-				Positives:  positives,
-				VtFinished: true,
-			})
+			Exec(ctx); err != nil {
+			fmt.Println(err)
+			return
+		}
 
 		fmt.Println("analysis [", analysisID, "] finished scanning")
 
@@ -39,7 +44,9 @@ func checkVirusTotalPositives(analysisID string, gorm *gorm.DB, apiClients *cont
 	}
 }
 
-func processRepo(repo models.Repository, gorm *gorm.DB, apiClients *context.ApiClients) error {
+func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClients) error {
+	ctx := ctx.Background()
+
 	releases, err := apiClients.GhClient.GetRepoReleases(repo.Name)
 
 	if err != nil {
@@ -58,7 +65,10 @@ func processRepo(repo models.Repository, gorm *gorm.DB, apiClients *context.ApiC
 	already := &models.Release{}
 
 	// skip this if already exists
-	if err := gorm.Where("gh_id = ?", firstGhRelease.ID).Preload("Repository").Find(already).Error; err != nil {
+	if _, err := db.NewSelect().
+		Model(&already).
+		Join("left join repositories as r on r.id = releases.repository_id").
+		Exec(ctx); err != nil {
 		return err
 	}
 	if already.ID != 0 {
@@ -66,7 +76,7 @@ func processRepo(repo models.Repository, gorm *gorm.DB, apiClients *context.ApiC
 		return nil
 	}
 
-	if err := gorm.Create(&releaseModel).Error; err != nil {
+	if _, err := db.NewInsert().Model(&releaseModel).Exec(ctx); err != nil {
 		return err
 	}
 
@@ -97,34 +107,46 @@ func processRepo(repo models.Repository, gorm *gorm.DB, apiClients *context.ApiC
 		}
 
 		releaseAssetModel.VtLink = "https://www.virustotal.com/gui/file-analysis/" + *scanResults + "/detection"
-		gorm.Create(&releaseAssetModel)
+		if _, err := db.NewInsert().Model(&releaseAssetModel).Exec(ctx); err != nil {
+			return err
+		}
 		os.RemoveAll(dir)
 
 		fmt.Println("uploaded", asset.BrowserDownloadURL)
 
-		go checkVirusTotalPositives(*scanResults, gorm, apiClients)
+		go checkVirusTotalPositives(*scanResults, db, apiClients)
 	}
 
 	return nil
 }
 
-func ProcessRepos(db *gorm.DB, apiClients *context.ApiClients) {
-	for {
-		results := []models.Repository{}
+func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
+	ctx := ctx.Background()
 
-		result := db.Model(&models.Repository{}).FindInBatches(&results, 100, func(tx *gorm.DB, batch int) error {
-			for _, repo := range results {
-				if err := processRepo(repo, db, apiClients); err != nil {
-					log.Println(err)
+	LIMIT := 100
+
+	for {
+		count, err := db.NewSelect().Model(models.Repository{}).Count(ctx)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		pages := int(math.Ceil(float64(count) / float64(LIMIT)))
+
+		for i := 0; i < pages; i++ {
+			repos := []models.Repository{}
+			if _, err := db.NewSelect().Model(&repos).Limit(LIMIT).Offset(i * LIMIT).Exec(ctx); err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			for _, repo := range repos {
+				if err = processRepo(repo, db, apiClients); err != nil {
+					fmt.Println(err)
 					continue
 				}
 			}
-
-			return nil
-		})
-
-		if result.Error != nil {
-			log.Fatalln(result.Error)
 		}
 	}
 }

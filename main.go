@@ -45,7 +45,7 @@ func main() {
 	// custom middleware
 	e.Use(context.Middleware)
 
-	gorm, dbMiddleware := db.GetMiddleware()
+	db, dbMiddleware := db.GetMiddleware()
 	e.Use(dbMiddleware)
 
 	apiClients, apiClientsMiddleware := api_clients.GetMiddleware()
@@ -53,7 +53,7 @@ func main() {
 
 	routes.AddRoutes(e)
 
-	go jobs.ProcessRepos(gorm, apiClients)
+	go jobs.ProcessRepos(db, apiClients)
 
 	e.Logger.Fatal(e.Start(":3001"))
 }

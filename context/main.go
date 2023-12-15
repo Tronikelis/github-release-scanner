@@ -5,7 +5,7 @@ import (
 	"github-release-scanner/utils/virustotal_api_client"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
+	"github.com/uptrace/bun"
 )
 
 type ApiClients struct {
@@ -15,7 +15,7 @@ type ApiClients struct {
 
 type Context struct {
 	echo.Context
-	Gorm       *gorm.DB
+	DB         *bun.DB
 	ApiClients *ApiClients
 }
 
@@ -23,7 +23,7 @@ func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cc := &Context{
 			Context:    c,
-			Gorm:       nil,
+			DB:         nil,
 			ApiClients: nil,
 		}
 
