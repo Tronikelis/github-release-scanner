@@ -27,6 +27,10 @@ func Search(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "bad query")
 	}
 
+	if requestQuery.Name == "" {
+		return c.JSON(http.StatusOK, Response{})
+	}
+
 	repos, err := ghClient.GetRepos(requestQuery.Name)
 	if err != nil {
 		return err

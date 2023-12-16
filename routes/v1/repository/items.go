@@ -1,13 +1,16 @@
 package repository
 
 import (
+	ctx "context"
+	"database/sql"
 	"github-release-scanner/constants"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
-	"github-release-scanner/middleware/db/scopes/pagination"
+	"github-release-scanner/utils/pagination"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/uptrace/bun"
 )
 
 type RequestQuery struct {
@@ -15,37 +18,38 @@ type RequestQuery struct {
 }
 
 func Items(c echo.Context) error {
-	gorm := c.(*context.Context).Gorm
+	ctx := ctx.Background()
+	db := c.(*context.Context).DB
 
 	var requestQuery RequestQuery
 	if err := c.Bind(&requestQuery); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "bad query")
 	}
 
-	totalRows := int64(0)
-	gorm.Model(models.Repository{}).Count(&totalRows)
-
-	pg := pagination.New[models.Repository](requestQuery.Page, requestQuery.Limit, uint(totalRows))
-
-	repositories := []models.Repository{}
-
-	err := gorm.
-		Scopes(pg.Scope()).
-		Model(models.Repository{}).
-		Preload("Releases", `repository_id in (
-			select __x.repository_id from (
-				select distinct(releases.repository_id), id from releases order by id desc
-			) __x
-		)`).
-		Preload("Releases.ReleaseAssets").
-		Find(&repositories).
-		Error
-
-	pg.SetRows(&repositories)
-
+	totalRows, err := db.NewSelect().Model(&models.Repository{}).Count(ctx)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, pg)
+	pagination := pagination.New(requestQuery.Page, requestQuery.Limit, uint(totalRows))
+
+	repositories := []models.Repository{}
+
+	if err := db.
+		NewSelect().
+		Model(&repositories).
+		Relation("Releases", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.DistinctOn("repository_id").Order("repository_id desc", "id desc")
+		}).
+		Relation("Releases.ReleaseAssets").
+		Limit(int(pagination.Limit)).
+		Offset(int(pagination.GetOffset())).
+		Order("id desc").
+		Scan(ctx); err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	pagination.SetRows(repositories)
+
+	return c.JSON(http.StatusOK, pagination)
 }

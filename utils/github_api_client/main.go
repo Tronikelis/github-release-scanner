@@ -47,12 +47,12 @@ func (client GithubApiClient) GetRepo(fullName string) (*GetRepoJSON, error) {
 		return nil, err
 	}
 
-	data := &GetRepoJSON{}
-	if err := response.JSON(data); err != nil {
+	data := GetRepoJSON{}
+	if err := response.JSON(&data); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 
 }
 
@@ -69,13 +69,13 @@ func (client GithubApiClient) GetRepoReleases(fullName string) (*[]GetRepoReleas
 		return nil, err
 	}
 
-	data := &[]GetRepoReleasesJSON{}
+	data := []GetRepoReleasesJSON{}
 
-	if err := response.JSON(data); err != nil {
+	if err := response.JSON(&data); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }
 
 func (client GithubApiClient) GetRepos(name string) (*GetReposJSON, error) {
@@ -99,11 +99,11 @@ func (client GithubApiClient) GetRepos(name string) (*GetReposJSON, error) {
 		return nil, err
 	}
 
-	data := &GetReposJSON{}
+	data := GetReposJSON{}
 
-	if err := response.JSON(data); err != nil {
+	if err := response.JSON(&data); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }

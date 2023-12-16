@@ -1,73 +1,72 @@
 package db
 
 import (
+	"database/sql"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
 	"log"
 	"os"
-	"strconv"
-	"time"
+
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
+	"github.com/uptrace/bun/extra/bundebug"
+
+	ctx "context"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-type DbConfig struct {
-	host     string
-	user     string
-	password string
-	dbName   string
-	port     uint
-}
+func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
 
-func (c DbConfig) getDsn() string {
-	s := ""
+	dsn := "postgres://" +
+		os.Getenv("DB_USER") +
+		":" + os.Getenv("DB_PASSWORD") +
+		"@" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + "/" +
+		os.Getenv("DB_DBNAME") + "?"
 
-	s += "host= " + c.host + " "
-	s += "user= " + c.user + " "
-	s += "password= " + c.password + " "
-	s += "dbname= " + c.dbName + " "
-	s += "port= " + strconv.Itoa(int(c.port)) + " "
-
-	s += "sslmode=prefer "
-
-	return s
-}
-
-func GetMiddleware() (*gorm.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
-	dbPort, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		log.Fatalln(err)
+	if isProd {
+		dsn += "sslmode=verify-full"
+	} else {
+		dsn += "sslmode=disable"
 	}
 
-	dbConfig := DbConfig{
-		host:     os.Getenv("DB_HOST"),
-		user:     os.Getenv("DB_USER"),
-		password: os.Getenv("DB_PASSWORD"),
-		dbName:   os.Getenv("DB_DBNAME"),
-		port:     uint(dbPort),
-	}
-
-	gorm, err := gorm.Open(postgres.Open(dbConfig.getDsn()))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	sqlDB, err := gorm.DB()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	sqlDB := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	sqlDB.SetMaxIdleConns(1)
 	sqlDB.SetMaxOpenConns(10)
-	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	gorm.AutoMigrate(models.Repository{}, models.Release{}, models.ReleaseAsset{})
+	db := bun.NewDB(sqlDB, pgdialect.New())
 
-	return gorm, func(next echo.HandlerFunc) echo.HandlerFunc {
+	db.AddQueryHook(bundebug.NewQueryHook())
+
+	ctx := ctx.Background()
+
+	if _, err := db.NewCreateTable().
+		Model(&models.Repository{}).
+		IfNotExists().
+		Exec(ctx); err != nil {
+		log.Fatalln(err)
+	}
+
+	if _, err := db.
+		NewCreateTable().
+		Model(&models.Release{}).
+		IfNotExists().
+		Exec(ctx); err != nil {
+		log.Fatalln(err)
+	}
+
+	if _, err := db.NewCreateTable().
+		Model(&models.ReleaseAsset{}).
+		IfNotExists().
+		Exec(ctx); err != nil {
+		log.Fatalln(err)
+	}
+
+	return db, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.(*context.Context).Gorm = gorm
+			c.(*context.Context).DB = db
 			return next(c)
 		}
 	}

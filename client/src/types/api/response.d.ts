@@ -2,14 +2,18 @@ import { PaginationDto, ReleaseAssetDto, ReleaseDto, RepositoryDto } from "../dt
 
 export type GetRepositoryItemsRes = PaginationDto<
     (RepositoryDto & {
-        Releases: (ReleaseDto & {
-            ReleaseAssets: ReleaseAssetDto[];
-        })[];
+        Releases:
+            | (ReleaseDto & {
+                  ReleaseAssets: ReleaseAssetDto[] | null;
+              })[]
+            | null;
     })[]
 >;
 
 export type GetGithubRepositoriesRes = {
-    Items: {
-        Name: string;
-    }[];
+    Items:
+        | {
+              Name: string;
+          }[]
+        | null;
 };

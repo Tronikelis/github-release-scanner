@@ -11,9 +11,11 @@ import (
 )
 
 type VirusTotalApiClient struct {
-	baseUrl  string
-	headers  map[string]string
-	throttle *time_queue.TimeQueueThrottled
+	baseUrl string
+	headers map[string]string
+
+	throttleSlow *time_queue.TimeQueueThrottled
+	throttleFast *time_queue.TimeQueueThrottled
 }
 
 func New() VirusTotalApiClient {
@@ -22,7 +24,8 @@ func New() VirusTotalApiClient {
 		log.Fatalln("missing VT_API_KEY")
 	}
 
-	throttle := time_queue.New(time.Minute, 4)
+	throttleSlow := time_queue.New(time.Minute, 4)
+	throttleFast := time_queue.New(time.Minute, 60)
 
 	return VirusTotalApiClient{
 		baseUrl: "https://www.virustotal.com/api/v3",
@@ -30,11 +33,14 @@ func New() VirusTotalApiClient {
 			"accept":   "application/json",
 			"x-apikey": apiKey,
 		},
-		throttle: &throttle,
+		throttleFast: &throttleFast,
+		throttleSlow: &throttleSlow,
 	}
 }
 
 func (client VirusTotalApiClient) getUploadUrl() (*string, error) {
+	client.throttleFast.TryAndWait()
+
 	resp, err := grequests.Get(client.baseUrl+"/files/upload_url", &grequests.RequestOptions{
 		Headers: client.headers,
 	})
@@ -45,7 +51,7 @@ func (client VirusTotalApiClient) getUploadUrl() (*string, error) {
 		return nil, err
 	}
 
-	data := &GetUploadUrlJSON{}
+	data := GetUploadUrlJSON{}
 
 	if err = resp.JSON(&data); err != nil {
 		return nil, err
@@ -55,16 +61,18 @@ func (client VirusTotalApiClient) getUploadUrl() (*string, error) {
 }
 
 func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
+	client.throttleFast.TryAndWait()
+
 	uploadUrl, err := client.getUploadUrl()
 	if err != nil {
 		return nil, err
 	}
 
-	data := &UploadFileJSON{}
+	data := UploadFileJSON{}
 
 	fileContents, _ := os.Open(filePath)
 
-	client.throttle.TryAndWait()
+	client.throttleSlow.TryAndWait()
 	resp, err := grequests.Post(*uploadUrl, &grequests.RequestOptions{
 		Files: []grequests.FileUpload{{
 			FileName:     "file",
@@ -80,7 +88,7 @@ func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
 		return nil, err
 	}
 
-	if err := resp.JSON(data); err != nil {
+	if err := resp.JSON(&data); err != nil {
 		return nil, err
 	}
 
@@ -88,6 +96,8 @@ func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
 }
 
 func (client VirusTotalApiClient) CheckAnalysis(analysisID string) (uint, bool, error) {
+	client.throttleFast.TryAndWait()
+
 	resp, err := grequests.Get(client.baseUrl+"/analyses/"+analysisID, &grequests.RequestOptions{
 		Headers: client.headers,
 	})
@@ -98,9 +108,9 @@ func (client VirusTotalApiClient) CheckAnalysis(analysisID string) (uint, bool, 
 		return 0, false, err
 	}
 
-	data := &CheckAnalysisJSON{}
+	data := CheckAnalysisJSON{}
 
-	if err := resp.JSON(data); err != nil {
+	if err := resp.JSON(&data); err != nil {
 		return 0, false, err
 	}
 

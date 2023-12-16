@@ -22,14 +22,14 @@ const HomePage: VoidComponent = () => {
                 <For each={data()?.Rows}>
                     {item => (
                         <RepositoryItem
-                            releaseAssetCount={item.Releases[0]?.ReleaseAssets.length ?? 0}
+                            releaseAssetCount={item.Releases?.[0]?.ReleaseAssets?.length ?? 0}
                             isVtFinished={
-                                item.Releases[0]?.ReleaseAssets.every(
+                                item.Releases?.[0]?.ReleaseAssets?.every(
                                     item => item.VtFinished
                                 ) ?? false
                             }
                             totalPositives={
-                                item.Releases[0]?.ReleaseAssets.reduce(
+                                item.Releases?.[0]?.ReleaseAssets?.reduce(
                                     (prev, acc) => (acc.Positives ?? 0) + prev,
                                     0
                                 ) ?? 0
@@ -37,7 +37,7 @@ const HomePage: VoidComponent = () => {
                             name={item.Name}
                             createdAt={item.CreatedAt}
                             description={item.Description || ""}
-                            releaseName={item.Releases[0]?.Name || ""}
+                            releaseName={item.Releases?.[0]?.Name || ""}
                             stars={item.Stars}
                         />
                     )}

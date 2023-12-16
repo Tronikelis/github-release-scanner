@@ -3,11 +3,18 @@ import toast from "solid-toast";
 
 import Button from "~/components/Button";
 import Group from "~/components/Group";
-import TextInput from "~/components/TextInput";
+import Select from "~/components/Select";
+import { useGithubRepositories } from "~/hooks/swr/github";
 import { useRepositoriesMutation } from "~/hooks/swr/repository";
+import useDebounce from "~/hooks/useDebounce";
 
 const AddRepository: VoidComponent = () => {
+    const [repo, setRepo] = createSignal("");
+
     const [repoName, setRepoName] = createSignal("");
+    const [lazyRepoName] = useDebounce(repoName);
+
+    const { data: repositories } = useGithubRepositories(() => ({ name: lazyRepoName() }));
 
     const { add } = useRepositoriesMutation();
 
@@ -22,11 +29,14 @@ const AddRepository: VoidComponent = () => {
 
     return (
         <Group>
-            <TextInput
-                placeholder="Repository"
-                value={repoName()}
-                onInput={e => setRepoName(e.target.value)}
+            <Select
+                value={repo()}
+                setValue={setRepo}
+                items={repositories()?.Items?.map(x => x.Name) || []}
+                inputValue={repoName()}
+                setInputValue={setRepoName}
             />
+
             <Button disabled={add.isTriggering()} onClick={handleAdd}>
                 Add
             </Button>
