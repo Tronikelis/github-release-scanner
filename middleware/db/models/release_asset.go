@@ -21,7 +21,7 @@ type ReleaseAsset struct {
 
 	Positives  uint   `bun:",nullzero"`
 	VtLink     string `bun:",unique,nullzero"`
-	VtFinished bool   `bun:",notnull"`
+	VtFinished bool   `bun:",notnull,default:false"`
 
 	ReleaseID uint     `bun:",notnull,nullzero"`
 	Release   *Release `bun:"rel:belongs-to,join:release_id=id"`

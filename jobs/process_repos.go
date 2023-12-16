@@ -93,6 +93,10 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 			Size:      uint(asset.Size),
 		}
 
+		if err := db.NewInsert().Model(&releaseAssetModel).Scan(ctx); err != nil {
+			return err
+		}
+
 		dir, err := os.MkdirTemp("", "github-release-scanner")
 		if err != nil {
 			return err
@@ -112,9 +116,7 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 		}
 
 		releaseAssetModel.VtLink = "https://www.virustotal.com/gui/file-analysis/" + *scanResults + "/detection"
-		if err := db.NewInsert().Model(&releaseAssetModel).Scan(ctx); err != nil {
-			return err
-		}
+
 		os.RemoveAll(dir)
 
 		log.Println("uploaded", asset.BrowserDownloadURL)

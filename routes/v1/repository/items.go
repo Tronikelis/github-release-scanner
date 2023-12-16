@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/uptrace/bun"
 )
 
 type RequestQuery struct {
@@ -37,12 +38,13 @@ func Items(c echo.Context) error {
 	if err := db.
 		NewSelect().
 		Model(&repositories).
-		Join(`left join (
-			select distinct on (releases.repository_id) * from releases order by repository_id, id desc
-		) releases on releases.repository_id = repository.id`).
+		Relation("Releases", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.DistinctOn("repository_id").Order("repository_id desc", "id desc")
+		}).
 		Relation("Releases.ReleaseAssets").
 		Limit(int(pagination.Limit)).
 		Offset(int(pagination.GetOffset())).
+		Order("id desc").
 		Scan(ctx); err != nil && err != sql.ErrNoRows {
 		return err
 	}
