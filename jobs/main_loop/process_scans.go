@@ -6,6 +6,7 @@ import (
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
 	"log"
+	"time"
 
 	"github.com/uptrace/bun"
 )
@@ -45,6 +46,7 @@ func processScans(db *bun.DB, apiClients *context.ApiClients) error {
 		if err := getRowsChunked(db, models.ReleaseAsset{}, func(asset models.ReleaseAsset) {
 			if err := checkAssetScan(asset, db, apiClients); err != nil {
 				log.Println(err)
+				time.Sleep(time.Hour * 6)
 			}
 		}); err != nil {
 			return err

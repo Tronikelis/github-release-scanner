@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 
 	"github.com/levigross/grequests"
 	"github.com/uptrace/bun"
@@ -64,6 +65,7 @@ func processReleaseAssets(db *bun.DB, apiClients *context.ApiClients) error {
 		if err := getRowsChunked(db, models.ReleaseAsset{}, func(asset models.ReleaseAsset) {
 			if err := uploadAsset(asset, db, apiClients); err != nil {
 				log.Println(err)
+				time.Sleep(time.Hour * 6)
 			}
 		}); err != nil {
 			return err

@@ -4,6 +4,7 @@ import (
 	ctx "context"
 	"database/sql"
 	"log"
+	"time"
 
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
@@ -73,6 +74,7 @@ func processReleases(db *bun.DB, apiClients *context.ApiClients) error {
 		if err := getRowsChunked(db, models.Repository{}, func(repo models.Repository) {
 			if err := createLatestRelease(repo, db, apiClients); err != nil {
 				log.Println(err)
+				time.Sleep(time.Hour * 6)
 			}
 		}); err != nil {
 			return err
