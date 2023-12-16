@@ -143,7 +143,13 @@ func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
 
 		for i := 0; i < pages; i++ {
 			repos := []models.Repository{}
-			if err := db.NewSelect().Model(&repos).Limit(LIMIT).Offset(i * LIMIT).Scan(ctx); err != nil {
+			if err := db.
+				NewSelect().
+				Model(&repos).
+				Limit(LIMIT).
+				Offset(i * LIMIT).
+				Order("id desc").
+				Scan(ctx); err != nil {
 				log.Println(err)
 				continue
 			}
