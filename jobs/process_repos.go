@@ -3,9 +3,9 @@ package jobs
 import (
 	ctx "context"
 	"database/sql"
-	"fmt"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
+	"log"
 	"math"
 	"os"
 	"path"
@@ -21,7 +21,7 @@ func checkVirusTotalPositives(analysisID string, db *bun.DB, apiClients *context
 	for {
 		positives, finished, err := apiClients.VtClient.CheckAnalysis(analysisID)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
@@ -35,11 +35,11 @@ func checkVirusTotalPositives(analysisID string, db *bun.DB, apiClients *context
 			Set("vt_finished = true").
 			Where("vt_link LIKE ?", "%"+analysisID+"%").
 			Scan(ctx); err != nil && err != sql.ErrNoRows {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
-		fmt.Println("analysis [", analysisID, "] finished scanning")
+		log.Println("analysis [", analysisID, "] finished scanning")
 
 		return
 	}
@@ -49,9 +49,13 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 	ctx := ctx.Background()
 
 	releases, err := apiClients.GhClient.GetRepoReleases(repo.Name)
-
 	if err != nil {
 		return err
+	}
+
+	if len(*releases) < 1 {
+		log.Println("no releases skipping")
+		return nil
 	}
 
 	firstGhRelease := (*releases)[0]
@@ -63,17 +67,17 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 		RepositoryID: repo.ID,
 	}
 
-	already := (*models.Release)(nil)
+	lastRelease := models.Release{}
 
 	// skip this if already exists
 	if err := db.NewSelect().
-		Model(already).
+		Model(&lastRelease).
 		Relation("Repository").
 		Scan(ctx); err != nil && err != sql.ErrNoRows {
 		return err
 	}
-	if already != nil {
-		fmt.Println("skipping", already.Repository.Name, "as it exists")
+	if lastRelease.ID != 0 {
+		log.Println("skipping", lastRelease.Repository.Name, "as it exists")
 		return nil
 	}
 
@@ -113,7 +117,7 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 		}
 		os.RemoveAll(dir)
 
-		fmt.Println("uploaded", asset.BrowserDownloadURL)
+		log.Println("uploaded", asset.BrowserDownloadURL)
 
 		go checkVirusTotalPositives(*scanResults, db, apiClients)
 	}
@@ -129,7 +133,7 @@ func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
 	for {
 		count, err := db.NewSelect().Model(&models.Repository{}).Count(ctx)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
@@ -138,18 +142,16 @@ func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
 		for i := 0; i < pages; i++ {
 			repos := []models.Repository{}
 			if err := db.NewSelect().Model(&repos).Limit(LIMIT).Offset(i * LIMIT).Scan(ctx); err != nil {
-				fmt.Println(err)
+				log.Println(err)
 				continue
 			}
 
 			for _, repo := range repos {
 				if err = processRepo(repo, db, apiClients); err != nil {
-					fmt.Println(err)
+					log.Println(err)
 					continue
 				}
 			}
 		}
-
-		time.Sleep(time.Second)
 	}
 }
