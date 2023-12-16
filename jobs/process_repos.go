@@ -2,6 +2,7 @@ package jobs
 
 import (
 	ctx "context"
+	"database/sql"
 	"fmt"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
@@ -29,11 +30,11 @@ func checkVirusTotalPositives(analysisID string, db *bun.DB, apiClients *context
 			continue
 		}
 
-		if _, err := db.NewUpdate().Model(models.ReleaseAsset{}).
+		if err := db.NewUpdate().Model(&models.ReleaseAsset{}).
 			Set("positives = ?", positives).
 			Set("vt_finished = true").
 			Where("vt_link LIKE ?", "%"+analysisID+"%").
-			Exec(ctx); err != nil {
+			Scan(ctx); err != nil && err != sql.ErrNoRows {
 			fmt.Println(err)
 			return
 		}
@@ -56,36 +57,36 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 	firstGhRelease := (*releases)[0]
 
 	releaseModel := models.Release{
-		Name:        firstGhRelease.Name,
-		GhID:        firstGhRelease.ID,
-		Description: firstGhRelease.Body,
-		Repository:  &repo,
+		Name:         firstGhRelease.Name,
+		GhID:         firstGhRelease.ID,
+		Description:  firstGhRelease.Body,
+		RepositoryID: repo.ID,
 	}
 
-	already := &models.Release{}
+	already := (*models.Release)(nil)
 
 	// skip this if already exists
-	if _, err := db.NewSelect().
-		Model(&already).
-		Join("left join repositories as r on r.id = releases.repository_id").
-		Exec(ctx); err != nil {
+	if err := db.NewSelect().
+		Model(already).
+		Relation("Repository").
+		Scan(ctx); err != nil && err != sql.ErrNoRows {
 		return err
 	}
-	if already.ID != 0 {
-		fmt.Println("skipping", (*already).Repository.Name, "as it exists")
+	if already != nil {
+		fmt.Println("skipping", already.Repository.Name, "as it exists")
 		return nil
 	}
 
-	if _, err := db.NewInsert().Model(&releaseModel).Exec(ctx); err != nil {
+	if err := db.NewInsert().Model(&releaseModel).Scan(ctx); err != nil {
 		return err
 	}
 
 	for _, asset := range firstGhRelease.Assets {
 		releaseAssetModel := models.ReleaseAsset{
-			Release: &releaseModel,
-			Name:    asset.Name,
-			GhID:    asset.ID,
-			Size:    uint(asset.Size),
+			ReleaseID: releaseModel.ID,
+			Name:      asset.Name,
+			GhID:      asset.ID,
+			Size:      uint(asset.Size),
 		}
 
 		dir, err := os.MkdirTemp("", "github-release-scanner")
@@ -107,7 +108,7 @@ func processRepo(repo models.Repository, db *bun.DB, apiClients *context.ApiClie
 		}
 
 		releaseAssetModel.VtLink = "https://www.virustotal.com/gui/file-analysis/" + *scanResults + "/detection"
-		if _, err := db.NewInsert().Model(&releaseAssetModel).Exec(ctx); err != nil {
+		if err := db.NewInsert().Model(&releaseAssetModel).Scan(ctx); err != nil {
 			return err
 		}
 		os.RemoveAll(dir)
@@ -126,7 +127,7 @@ func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
 	LIMIT := 100
 
 	for {
-		count, err := db.NewSelect().Model(models.Repository{}).Count(ctx)
+		count, err := db.NewSelect().Model(&models.Repository{}).Count(ctx)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -136,7 +137,7 @@ func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
 
 		for i := 0; i < pages; i++ {
 			repos := []models.Repository{}
-			if _, err := db.NewSelect().Model(&repos).Limit(LIMIT).Offset(i * LIMIT).Exec(ctx); err != nil {
+			if err := db.NewSelect().Model(&repos).Limit(LIMIT).Offset(i * LIMIT).Scan(ctx); err != nil {
 				fmt.Println(err)
 				continue
 			}
@@ -148,5 +149,7 @@ func ProcessRepos(db *bun.DB, apiClients *context.ApiClients) {
 				}
 			}
 		}
+
+		time.Sleep(time.Second)
 	}
 }

@@ -21,12 +21,12 @@ type Context struct {
 
 func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		cc := &Context{
+		cc := Context{
 			Context:    c,
 			DB:         nil,
 			ApiClients: nil,
 		}
 
-		return next(cc)
+		return next(&cc)
 	}
 }

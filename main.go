@@ -45,7 +45,7 @@ func main() {
 	// custom middleware
 	e.Use(context.Middleware)
 
-	db, dbMiddleware := db.GetMiddleware()
+	db, dbMiddleware := db.GetMiddleware(isProd)
 	e.Use(dbMiddleware)
 
 	apiClients, apiClientsMiddleware := api_clients.GetMiddleware()

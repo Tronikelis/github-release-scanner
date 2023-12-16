@@ -10,21 +10,21 @@ import (
 type ReleaseAsset struct {
 	bun.BaseModel `bun:"table:release_assets"`
 
-	ID        uint      `bun:"pk, autoincrement"`
-	CreatedAt time.Time `bun:"nullzero, notnull, default:current_timestamp"`
-	UpdatedAt time.Time `bun:"nullzero, notnull, default:current_timestamp"`
+	ID        uint      `bun:",pk,autoincrement"`
+	CreatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
+	UpdatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 
-	GhID uint `bun:"unique, nullzero, notnull"`
+	GhID uint `bun:",unique,nullzero,notnull"`
 
-	Name string `bun:"nullzero, notnull"`
-	Size uint   `bun:"nullzero, notnull"`
+	Name string `bun:",nullzero,notnull"`
+	Size uint   `bun:",nullzero,notnull"`
 
-	Positives  uint   `bun:"nullzero"`
-	VtLink     string `bun:"unique, nullzero"`
-	VtFinished bool   `bun:"notnull"`
+	Positives  uint   `bun:",nullzero"`
+	VtLink     string `bun:",unique,nullzero"`
+	VtFinished bool   `bun:",notnull"`
 
-	ReleaseID uint     `bun:"notnull, nullzero"`
-	Release   *Release `bun:"rel:belongs-to, join:release_id=id"`
+	ReleaseID uint     `bun:",notnull,nullzero"`
+	Release   *Release `bun:"rel:belongs-to,join:release_id=id"`
 }
 
 func (*ReleaseAsset) BeforeCreateTable(ctx ctx.Context, query *bun.CreateTableQuery) error {

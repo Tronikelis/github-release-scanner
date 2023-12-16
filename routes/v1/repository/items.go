@@ -23,14 +23,14 @@ func Items(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "bad query")
 	}
 
-	_, err := db.NewSelect().Model(models.Repository{}).Count(ctx)
+	_, err := db.NewSelect().Model(&models.Repository{}).Count(ctx)
 	if err != nil {
 		return err
 	}
 
 	repositories := []models.Repository{}
 
-	if _, err := db.NewSelect().Model(&repositories).Exec(ctx); err != nil {
+	if err := db.NewSelect().Model(&repositories).Scan(ctx); err != nil {
 		return err
 	}
 

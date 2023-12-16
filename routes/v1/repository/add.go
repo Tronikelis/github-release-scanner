@@ -35,7 +35,7 @@ func Add(c echo.Context) error {
 		Stars:       uint(rawRepo.StargazersCount),
 	}
 
-	if _, err := db.NewInsert().Model(&repo).Exec(ctx); err != nil {
+	if err := db.NewInsert().Model(&repo).Scan(ctx); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

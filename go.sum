@@ -1,6 +1,8 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/fatih/color v1.15.0 h1:kOqh6YHBtK8aywxGerMG2Eq3H6Qgoqeo13Bk2Mv/nBs=
+github.com/fatih/color v1.15.0/go.mod h1:0h5ZqXfHYED7Bhv2ZJamyIOUej9KtShiJESRwBDUSsw=
 github.com/golang-jwt/jwt v3.2.2+incompatible h1:IfV12K8xAKAnZqdXVzCZ+TOjboZ2keLg81eXfW3O+oY=
 github.com/golang-jwt/jwt v3.2.2+incompatible/go.mod h1:8pz2t5EyA70fFQQSrl6XZXzqecmYZeUEB8OUGHkxJ+I=
 github.com/google/go-cmp v0.5.2 h1:X2ev0eStA3AbceY54o37/0PQ/UWqKEiiO2dKL5OPaFM=
@@ -36,6 +38,8 @@ github.com/uptrace/bun/dialect/pgdialect v1.1.16 h1:eUPZ+YCJ69BA+W1X1ZmpOJSkv1oY
 github.com/uptrace/bun/dialect/pgdialect v1.1.16/go.mod h1:KQjfx/r6JM0OXfbv0rFrxAbdkPD7idK8VitnjIV9fZI=
 github.com/uptrace/bun/driver/pgdriver v1.1.16 h1:b/NiSXk6Ldw7KLfMLbOqIkm4odHd7QiNOCPLqPFJjK4=
 github.com/uptrace/bun/driver/pgdriver v1.1.16/go.mod h1:Rmfbc+7lx1z/umjMyAxkOHK81LgnGj71XC5YpA6k1vU=
+github.com/uptrace/bun/extra/bundebug v1.1.16 h1:SgicRQGtnjhrIhlYOxdkOm1Em4s6HykmT3JblHnoTBM=
+github.com/uptrace/bun/extra/bundebug v1.1.16/go.mod h1:SkiOkfUirBiO1Htc4s5bQKEq+JSeU1TkBVpMsPz2ePM=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasttemplate v1.2.2 h1:lxLXG0uE3Qnshl9QyaK6XJxMXlQZELvChBOCmQD0Loo=

@@ -45,7 +45,7 @@ func (client VirusTotalApiClient) getUploadUrl() (*string, error) {
 		return nil, err
 	}
 
-	data := &GetUploadUrlJSON{}
+	data := GetUploadUrlJSON{}
 
 	if err = resp.JSON(&data); err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
 		return nil, err
 	}
 
-	data := &UploadFileJSON{}
+	data := UploadFileJSON{}
 
 	fileContents, _ := os.Open(filePath)
 
@@ -80,7 +80,7 @@ func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
 		return nil, err
 	}
 
-	if err := resp.JSON(data); err != nil {
+	if err := resp.JSON(&data); err != nil {
 		return nil, err
 	}
 
@@ -98,9 +98,9 @@ func (client VirusTotalApiClient) CheckAnalysis(analysisID string) (uint, bool, 
 		return 0, false, err
 	}
 
-	data := &CheckAnalysisJSON{}
+	data := CheckAnalysisJSON{}
 
-	if err := resp.JSON(data); err != nil {
+	if err := resp.JSON(&data); err != nil {
 		return 0, false, err
 	}
 

@@ -10,24 +10,35 @@ import (
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
+	"github.com/uptrace/bun/extra/bundebug"
 
 	ctx "context"
 
 	"github.com/labstack/echo/v4"
 )
 
-func GetMiddleware() (*bun.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
-	sqlDB := sql.OpenDB(pgdriver.NewConnector(
-		pgdriver.WithAddr(os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT")),
-		pgdriver.WithUser(os.Getenv("DB_USER")),
-		pgdriver.WithPassword(os.Getenv("DB_PASSWORD")),
-		pgdriver.WithDatabase(os.Getenv("DB_DBNAME")),
-	))
+func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
+
+	dsn := "postgres://" +
+		os.Getenv("DB_USER") +
+		":" + os.Getenv("DB_PASSWORD") +
+		"@" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + "/" +
+		os.Getenv("DB_DBNAME") + "?"
+
+	if isProd {
+		dsn += "sslmode=verify-full"
+	} else {
+		dsn += "sslmode=disable"
+	}
+
+	sqlDB := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	sqlDB.SetMaxIdleConns(1)
 	sqlDB.SetMaxOpenConns(10)
 
 	db := bun.NewDB(sqlDB, pgdialect.New())
+
+	db.AddQueryHook(bundebug.NewQueryHook())
 
 	ctx := ctx.Background()
 
