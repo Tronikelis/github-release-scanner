@@ -22,7 +22,7 @@ type Release struct {
 	RepositoryID uint        `bun:",notnull,nullzero"`
 	Repository   *Repository `bun:"rel:belongs-to,join:repository_id=id"`
 
-	ReleaseAssets []*ReleaseAsset `bun:"rel:has-many,join:id=release_id"`
+	ReleaseAssets []ReleaseAsset `bun:"rel:has-many,join:id=release_id"`
 }
 
 func (*Release) BeforeCreateTable(ctx ctx.Context, query *bun.CreateTableQuery) error {

@@ -18,5 +18,5 @@ type Repository struct {
 	Stars       uint   `bun:",nullzero,notnull"`
 	Description string
 
-	Releases []*Release `bun:"rel:has-many,join:id=repository_id"`
+	Releases []Release `bun:"rel:has-many,join:id=repository_id"`
 }
