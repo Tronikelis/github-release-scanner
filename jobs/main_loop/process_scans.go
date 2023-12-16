@@ -51,5 +51,7 @@ func processScans(db *bun.DB, apiClients *context.ApiClients) error {
 		}); err != nil {
 			return err
 		}
+
+		time.Sleep(time.Minute)
 	}
 }

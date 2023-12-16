@@ -39,6 +39,7 @@ func createLatestRelease(repository models.Repository, db *bun.DB, apiClients *c
 	// skip this if already exists
 	if err := db.NewSelect().
 		Model(&lastRelease).
+		Where("gh_id = ?", firstGhRelease.ID).
 		Relation("Repository").
 		Scan(ctx); err != nil && err != sql.ErrNoRows {
 		return err
@@ -79,5 +80,7 @@ func processReleases(db *bun.DB, apiClients *context.ApiClients) error {
 		}); err != nil {
 			return err
 		}
+
+		time.Sleep(time.Minute)
 	}
 }
