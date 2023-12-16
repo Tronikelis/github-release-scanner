@@ -11,7 +11,9 @@ export type GetRepositoryItemsRes = PaginationDto<
 >;
 
 export type GetGithubRepositoriesRes = {
-    Items: {
-        Name: string;
-    }[];
+    Items:
+        | {
+              Name: string;
+          }[]
+        | null;
 };

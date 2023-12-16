@@ -18,7 +18,6 @@ import {
     createSignal,
     FlowComponent,
     onCleanup,
-    Setter,
     splitProps,
 } from "solid-js";
 import { Portal } from "solid-js/web";
@@ -35,7 +34,6 @@ type Props = {
     isHoverable?: boolean;
     isOpened?: boolean;
     isFullWidth?: boolean;
-    setIsOpened?: Setter<boolean>;
     placement?: Placement;
 } & ComponentProps<"div"> &
     VariantProps<typeof dropdown>;
@@ -44,7 +42,6 @@ const Dropdown: FlowComponent<Props> = props => {
     const [local, others] = splitProps(props, [
         "targetRef",
         "isOpened",
-        "setIsOpened",
         "class",
         "children",
         "ref",
