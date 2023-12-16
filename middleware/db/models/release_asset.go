@@ -14,13 +14,15 @@ type ReleaseAsset struct {
 	CreatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 	UpdatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 
-	GhID uint `bun:",unique,nullzero,notnull"`
+	GhID          uint   `bun:",unique,nullzero,notnull"`
+	GhDownloadUrl string `bun:",nullzero,notnull"`
 
 	Name string `bun:",nullzero,notnull"`
 	Size uint   `bun:",nullzero,notnull"`
 
 	Positives  uint   `bun:",nullzero"`
 	VtLink     string `bun:",unique,nullzero"`
+	VtId       string `bun:",unique,nullzero"`
 	VtFinished bool   `bun:",nullzero,notnull,default:false"`
 
 	ReleaseID uint     `bun:",notnull,nullzero"`

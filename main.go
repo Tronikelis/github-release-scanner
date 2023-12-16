@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 
 	"github-release-scanner/context"
-	"github-release-scanner/jobs"
+	"github-release-scanner/jobs/main_loop"
 	"github-release-scanner/middleware/api_clients"
 	"github-release-scanner/middleware/db"
 	"github-release-scanner/routes"
@@ -53,7 +53,7 @@ func main() {
 
 	routes.AddRoutes(e)
 
-	go jobs.ProcessRepos(db, apiClients)
+	go main_loop.MainLoop(db, apiClients)
 
 	e.Logger.Fatal(e.Start(":3001"))
 }
