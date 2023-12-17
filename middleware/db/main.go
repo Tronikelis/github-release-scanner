@@ -18,7 +18,6 @@ import (
 )
 
 func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
-
 	dsn := "postgres://" +
 		os.Getenv("DB_USER") +
 		":" + os.Getenv("DB_PASSWORD") +
