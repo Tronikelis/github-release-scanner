@@ -2,3 +2,4 @@
 temp/
 node_modules/
 client/dist/
+_priv/

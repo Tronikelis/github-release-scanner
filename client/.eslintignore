@@ -7,3 +7,4 @@ jest.setup.ts
 vite.config.ts
 drizzle.config.ts
 postcss.config.cjs
+tailwind.config.cjs

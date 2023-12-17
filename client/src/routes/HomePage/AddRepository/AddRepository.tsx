@@ -19,9 +19,12 @@ const AddRepository: VoidComponent = () => {
     const { add } = useRepositoriesMutation();
 
     const handleAdd = async () => {
+        if (!repo()) return;
+
         try {
-            await add.trigger({ name: repoName() });
+            await add.trigger({ name: repo() });
             add.populateCache();
+            setRepo("");
         } catch (err: unknown) {
             toast.error(JSON.stringify(err));
         }
@@ -30,11 +33,13 @@ const AddRepository: VoidComponent = () => {
     return (
         <Group>
             <Select
+                class="lg:min-w-[320px]"
                 value={repo()}
                 setValue={setRepo}
                 items={repositories()?.Items?.map(x => x.Name) || []}
                 inputValue={repoName()}
                 setInputValue={setRepoName}
+                placeholder="Search repos"
             />
 
             <Button disabled={add.isTriggering()} onClick={handleAdd}>

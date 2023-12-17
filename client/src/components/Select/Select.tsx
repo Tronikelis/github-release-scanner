@@ -1,8 +1,17 @@
 import { createEventListener } from "@solid-primitives/event-listener";
-import { createSignal, For, Setter, splitProps, VoidComponent } from "solid-js";
+import { mergeRefs } from "@solid-primitives/refs";
+import {
+    ComponentProps,
+    createSignal,
+    For,
+    Setter,
+    splitProps,
+    VoidComponent,
+} from "solid-js";
 
 import useClickOutside from "~/hooks/useClickOutside";
 
+import Badge from "../Badge";
 import Dropdown from "../Dropdown";
 import Paper from "../Paper";
 import Stack from "../Stack";
@@ -16,7 +25,7 @@ type Props = {
     value: string;
     setValue: Setter<string>;
     items: string[];
-};
+} & ComponentProps<typeof TextInput>;
 
 const Select: VoidComponent<Props> = props => {
     const [local, others] = splitProps(props, [
@@ -25,6 +34,7 @@ const Select: VoidComponent<Props> = props => {
         "items",
         "inputValue",
         "setInputValue",
+        "ref",
     ]);
 
     const [isDropdownOpened, setIsDropdownOpened] = createSignal(false);
@@ -40,8 +50,9 @@ const Select: VoidComponent<Props> = props => {
     useClickOutside(() => [containerRef(), dropdownRef, inputRef], handleClose);
 
     const handleSelect = (item: string) => {
+        setIsDropdownOpened(false);
         local.setValue(item);
-        local.setInputValue?.(item);
+        local.setInputValue?.("");
     };
 
     return (
@@ -50,7 +61,9 @@ const Select: VoidComponent<Props> = props => {
                 value={local.inputValue}
                 onInput={e => local.setInputValue?.(e.target.value)}
                 containerRef={setContainerRef}
-                ref={inputRef}
+                ref={mergeRefs(local.ref, el => (inputRef = el))}
+                leftSection={local.value && <Badge>{local.value}</Badge>}
+                {...others}
             />
 
             <Dropdown

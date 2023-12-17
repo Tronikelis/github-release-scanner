@@ -39,7 +39,7 @@ const TextInput: VoidComponent<Props> = props => {
                 </Text>
             )}
 
-            <Group class={clsx(input(), "gap-0.5 flex-nowrap")}>
+            <Group class={clsx(input(), "gap-2 flex-nowrap")}>
                 {local.leftSection}
                 <ControlledInput style={{ all: "unset" }} type="text" {...others} />
             </Group>
