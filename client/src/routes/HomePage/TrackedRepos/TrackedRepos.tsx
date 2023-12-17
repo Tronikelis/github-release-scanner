@@ -1,5 +1,7 @@
 import { For } from "solid-js";
 
+import Group from "~/components/Group";
+import Loader from "~/components/Loader";
 import Pagination from "~/components/Pagination";
 import Stack from "~/components/Stack";
 import { useRepositories } from "~/hooks/swr/repository";
@@ -10,16 +12,23 @@ import RepositoryItem from "./RepositoryItem";
 export default function TrackedRepos() {
     const [page, setPage] = usePage([]);
 
-    const { data } = useRepositories(
+    const { data, isLoading } = useRepositories(
         () => ({
             page: page(),
         }),
-        { refreshInterval: 5e3 }
+        { refreshInterval: 5e3, keepPreviousData: true }
     );
 
     return (
         <Stack>
-            <Pagination total={data()?.TotalPages || 0} value={page()} setValue={setPage} />
+            <Group>
+                <Pagination
+                    total={data()?.TotalPages || 0}
+                    value={page()}
+                    setValue={setPage}
+                />
+                {isLoading() && <Loader />}
+            </Group>
 
             <Stack class="gap-8 grid grid-cols-1 lg:grid-cols-4">
                 <For each={data()?.Rows}>

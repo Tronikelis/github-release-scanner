@@ -3,6 +3,7 @@ import toast from "solid-toast";
 
 import Button from "~/components/Button";
 import Group from "~/components/Group";
+import Loader from "~/components/Loader";
 import Select from "~/components/Select";
 import { useGithubRepositories } from "~/hooks/swr/github";
 import { useRepositoriesMutation } from "~/hooks/swr/repository";
@@ -15,7 +16,12 @@ export default function AddRepository(_props: ForbidChildren) {
     const [repoName, setRepoName] = createSignal("");
     const [lazyRepoName] = useDebounce(repoName);
 
-    const { data: repositories } = useGithubRepositories(() => ({ name: lazyRepoName() }));
+    const { data: repositories, isLoading } = useGithubRepositories(
+        () => ({
+            name: lazyRepoName(),
+        }),
+        { keepPreviousData: true }
+    );
 
     const { add } = useRepositoriesMutation();
 
@@ -41,6 +47,7 @@ export default function AddRepository(_props: ForbidChildren) {
                 inputValue={repoName()}
                 setInputValue={setRepoName}
                 placeholder="Search github repos"
+                rightSection={isLoading() && <Loader />}
             />
 
             <Button disabled={add.isTriggering()} onClick={handleAdd}>

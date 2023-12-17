@@ -18,6 +18,7 @@ const input = tv({
 type Props = {
     label?: string;
     leftSection?: JSX.Element;
+    rightSection?: JSX.Element;
     containerRef?: Setter<HTMLDivElement | undefined>;
 } & ComponentProps<"input"> &
     VariantProps<typeof input>;
@@ -26,6 +27,7 @@ const TextInput: VoidComponent<Props> = props => {
     const [local, others] = splitProps(props, [
         "class",
         "leftSection",
+        "rightSection",
         "label",
         "containerRef",
     ]);
@@ -38,9 +40,22 @@ const TextInput: VoidComponent<Props> = props => {
                 </Text>
             )}
 
-            <Group class={clsx(input(), "gap-2 flex-nowrap")}>
+            <Group class={clsx(input(), "gap-2 flex-nowrap relative")}>
                 {local.leftSection}
-                <ControlledInput style={{ all: "unset" }} type="text" {...others} />
+
+                <Group class={clsx("flex-1", local.rightSection && "pr-10")}>
+                    <ControlledInput
+                        type="text"
+                        class="flex-1 outline-none border-none bg-transparent"
+                        {...others}
+                    />
+                </Group>
+
+                {local.rightSection && (
+                    <div class="w-10 h-full absolute top-0 right-0 bottom-0 flex items-center justify-center">
+                        {local.rightSection}
+                    </div>
+                )}
             </Group>
         </Stack>
     );

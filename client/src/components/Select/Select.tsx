@@ -72,16 +72,18 @@ const Select: VoidComponent<Props> = props => {
                 ref={dropdownRef}
                 targetRef={containerRef}
             >
-                <Paper class="p-0 overflow-auto max-h-96">
-                    <Stack class="gap-1">
+                <Paper class="overflow-auto max-h-96">
+                    {local.items.length === 0 && <Text>0 results</Text>}
+
+                    <Stack>
                         <For each={local.items}>
                             {item => (
-                                <Paper
+                                <Text
+                                    class="truncate hover:cursor-pointer"
                                     onClick={() => handleSelect(item)}
-                                    class="hover:cursor-pointer"
                                 >
-                                    <Text class="truncate">{item}</Text>
-                                </Paper>
+                                    {item}
+                                </Text>
                             )}
                         </For>
                     </Stack>
