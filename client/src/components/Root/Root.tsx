@@ -1,12 +1,15 @@
 import { Route, Router } from "@solidjs/router";
-import { VoidComponent } from "solid-js";
+import { lazy, VoidComponent } from "solid-js";
 import { SWROptionsProvider } from "solid-swr";
 import toast, { Toaster } from "solid-toast";
 
 import { axios } from "~/classes/Axios";
-import HomePage from "~/routes/HomePage";
 
 import Container from "../Container";
+
+const HomePage = lazy(() => import("~/routes/HomePage"));
+const RepoPage = lazy(() => import("~/routes/RepoPage"));
+const RepoReleasePage = lazy(() => import("~/routes/RepoReleasePage"));
 
 const Root: VoidComponent = () => {
     return (
@@ -20,6 +23,11 @@ const Root: VoidComponent = () => {
             <Container>
                 <Router>
                     <Route path="/" component={HomePage} />
+                    <Route path="/repo/:repoName" component={RepoPage} />
+                    <Route
+                        path="/repo/:repoName/release/:releaseId"
+                        component={RepoReleasePage}
+                    />
                 </Router>
             </Container>
         </SWROptionsProvider>

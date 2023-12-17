@@ -38,9 +38,9 @@ const RepositoryItem: VoidComponent<Props> = props => {
                     </Text>
                     <Text size="xl" isTruncated isLink>
                         <a
-                            href={urlbat("/repo/:name/release/:id", {
+                            href={urlbat("/repo/:name/release/:releaseId", {
                                 name: props.name,
-                                id: props.releaseId,
+                                releaseId: props.releaseId,
                             })}
                         >
                             {props.releaseName}
