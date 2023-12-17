@@ -6,6 +6,7 @@ import (
 	"github-release-scanner/constants"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
+	utils_http "github-release-scanner/utils/http"
 	"github-release-scanner/utils/pagination"
 	"net/http"
 
@@ -23,6 +24,10 @@ func Items(c echo.Context) error {
 
 	requestQuery := RequestQuery{}
 	if err := c.Bind(&requestQuery); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if err := utils_http.UnescapeQueryStruct(&requestQuery); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
+	utils_http "github-release-scanner/utils/http"
 	"net/http"
-	"net/url"
 
 	"github.com/labstack/echo/v4"
 )
@@ -24,10 +24,8 @@ func ParamName(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if decoded, err := url.QueryUnescape(requestParams.Name); err != nil {
+	if err := utils_http.UnescapeQueryStruct(&requestParams); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
-	} else {
-		requestParams.Name = decoded
 	}
 
 	repository := models.Repository{}

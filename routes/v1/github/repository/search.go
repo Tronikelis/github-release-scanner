@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github-release-scanner/context"
+	utils_http "github-release-scanner/utils/http"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -23,6 +24,10 @@ func Search(c echo.Context) error {
 
 	requestQuery := RequestQuery{}
 	if err := c.Bind(&requestQuery); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if err := utils_http.UnescapeQueryStruct(&requestQuery); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
