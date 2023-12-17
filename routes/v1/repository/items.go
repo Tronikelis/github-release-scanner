@@ -21,9 +21,9 @@ func Items(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 
-	var requestQuery RequestQuery
+	requestQuery := RequestQuery{}
 	if err := c.Bind(&requestQuery); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "bad query")
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	totalRows, err := db.NewSelect().Model(&models.Repository{}).Count(ctx)

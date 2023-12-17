@@ -6,12 +6,13 @@ import (
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
 	"net/http"
+	"net/url"
 
 	"github.com/labstack/echo/v4"
 )
 
 type RequestParams struct {
-	Name uint `param:"name"`
+	Name string `param:"name"`
 }
 
 func ParamName(c echo.Context) error {
@@ -20,7 +21,13 @@ func ParamName(c echo.Context) error {
 
 	requestParams := RequestParams{}
 	if err := c.Bind(&requestParams); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "bad request")
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if decoded, err := url.QueryUnescape(requestParams.Name); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	} else {
+		requestParams.Name = decoded
 	}
 
 	repository := models.Repository{}
@@ -32,7 +39,7 @@ func ParamName(c echo.Context) error {
 		Scan(ctx); err != nil {
 
 		if err == sql.ErrNoRows {
-			return echo.NewHTTPError(http.StatusNotFound)
+			return echo.NewHTTPError(http.StatusNotFound, "repo was not found")
 		}
 
 		return err

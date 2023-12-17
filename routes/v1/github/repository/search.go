@@ -22,9 +22,8 @@ func Search(c echo.Context) error {
 	ghClient := c.(*context.Context).ApiClients.GhClient
 
 	requestQuery := RequestQuery{}
-
 	if err := c.Bind(&requestQuery); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "bad query")
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	if requestQuery.Name == "" {

@@ -20,7 +20,7 @@ func Add(c echo.Context) error {
 
 	requestBody := RequestBody{}
 	if err := c.Bind(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "bad request body")
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	rawRepo, err := apiClients.GhClient.GetRepo(requestBody.Name)

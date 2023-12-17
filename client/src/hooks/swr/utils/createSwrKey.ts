@@ -7,7 +7,7 @@ export function createSwrKey<T extends Record<string, any>>(
 ) {
     return () => {
         const a = arg();
-        if (!a) return undefined;
+        if (!a) return;
         return urlbat(baseUrl, a);
     };
 }
