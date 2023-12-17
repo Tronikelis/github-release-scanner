@@ -1,4 +1,4 @@
-import { createSignal, VoidComponent } from "solid-js";
+import { createSignal } from "solid-js";
 import toast from "solid-toast";
 
 import Button from "~/components/Button";
@@ -7,8 +7,9 @@ import Select from "~/components/Select";
 import { useGithubRepositories } from "~/hooks/swr/github";
 import { useRepositoriesMutation } from "~/hooks/swr/repository";
 import useDebounce from "~/hooks/useDebounce";
+import { ForbidChildren } from "~/types/utils";
 
-const AddRepository: VoidComponent = () => {
+export default function AddRepository(_props: ForbidChildren) {
     const [repo, setRepo] = createSignal("");
 
     const [repoName, setRepoName] = createSignal("");
@@ -47,6 +48,4 @@ const AddRepository: VoidComponent = () => {
             </Button>
         </Group>
     );
-};
-
-export default AddRepository;
+}
