@@ -37,7 +37,7 @@ func search(c echo.Context) error {
 
 	repos, err := ghClient.GetRepos(requestQuery.Name)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	response := response{}
