@@ -10,7 +10,7 @@ import TrackedRepos from "./TrackedRepos";
 const HomePage: VoidComponent = () => {
     return (
         <Stack class="gap-8">
-            <Group class="justify-between">
+            <Group class="justify-between flex-wrap">
                 <Text size="xl3">🤖 Github release scanner</Text>
 
                 <AddRepository />

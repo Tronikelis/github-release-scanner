@@ -16,6 +16,9 @@ const text = tv({
         isTruncated: {
             true: "truncate",
         },
+        isLink: {
+            true: "text-blue-600 hover:underline no-underline hover:cursor-pointer w-fit",
+        },
         size: {
             sm: "text-sm",
             lg: "text-lg",
@@ -43,6 +46,7 @@ const Text: FlowComponent<Props> = props => {
         "isDimmed",
         "isTruncated",
         "size",
+        "isLink",
     ]);
 
     const tv = (): Parameters<typeof text>[number] => ({
@@ -52,6 +56,7 @@ const Text: FlowComponent<Props> = props => {
         isDimmed: local.isDimmed,
         isTruncated: local.isTruncated,
         size: local.size,
+        isLink: local.isLink,
     });
 
     return (

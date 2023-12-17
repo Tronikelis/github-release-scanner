@@ -40,7 +40,7 @@ export default function AddRepository(_props: ForbidChildren) {
                 items={repositories()?.Items?.map(x => x.Name) || []}
                 inputValue={repoName()}
                 setInputValue={setRepoName}
-                placeholder="Search repos"
+                placeholder="Search github repos"
             />
 
             <Button disabled={add.isTriggering()} onClick={handleAdd}>
