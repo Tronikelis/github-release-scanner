@@ -1,4 +1,4 @@
-package repository
+package _name_
 
 import (
 	ctx "context"
@@ -11,15 +11,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type RequestParams struct {
+type requestParams struct {
 	Name string `param:"name"`
 }
 
-func ParamName(c echo.Context) error {
+func index(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 
-	requestParams := RequestParams{}
+	requestParams := requestParams{}
 	if err := c.Bind(&requestParams); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}

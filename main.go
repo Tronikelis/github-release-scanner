@@ -33,6 +33,7 @@ func main() {
 		e.Use(middleware.Recover())
 	}
 
+	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
 
 	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{

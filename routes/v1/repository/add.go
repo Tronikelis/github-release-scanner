@@ -9,16 +9,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type RequestBody struct {
+type requestBody struct {
 	Name string `json:"name"`
 }
 
-func Add(c echo.Context) error {
+func add(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 	apiClients := c.(*context.Context).ApiClients
 
-	requestBody := RequestBody{}
+	requestBody := requestBody{}
 	if err := c.Bind(&requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}

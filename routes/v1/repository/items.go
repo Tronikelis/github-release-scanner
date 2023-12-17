@@ -14,15 +14,15 @@ import (
 	"github.com/uptrace/bun"
 )
 
-type RequestQuery struct {
+type requestQuery struct {
 	constants.PaginationQuery
 }
 
-func Items(c echo.Context) error {
+func items(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 
-	requestQuery := RequestQuery{}
+	requestQuery := requestQuery{}
 	if err := c.Bind(&requestQuery); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
