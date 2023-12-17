@@ -1,17 +1,16 @@
-import { Accessor } from "solid-js";
 import useSWR, { Options } from "solid-swr";
-import urlbat from "urlbat";
 
-import { GetGithubRepositoriesQuery, GetGithubRepositoriesRes } from "~/types/api";
+import { SwrArg, UseGithubRepositoriesArg, UseGithubRepositoriesRes } from "../types";
+import { createSwrKey } from "../utils";
 
 export function useGithubRepositories(
-    query: Accessor<GetGithubRepositoriesQuery | undefined>,
-    options?: Options<GetGithubRepositoriesRes, unknown>
+    arg: SwrArg<UseGithubRepositoriesArg>,
+    options?: Options<UseGithubRepositoriesRes, unknown>
 ) {
-    const key = () => {
-        return urlbat("/github/repository/search", query() || {});
-    };
+    const swr = useSWR<UseGithubRepositoriesRes>(
+        createSwrKey("/github/repository/search", arg),
+        options
+    );
 
-    const swr = useSWR(key, options);
     return swr;
 }

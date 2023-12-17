@@ -1,28 +1,22 @@
-import { Accessor } from "solid-js";
 import useSWR, { Options, useSWRMutation } from "solid-swr";
-import urlbat from "urlbat";
 
 import { axios } from "~/classes/Axios";
-import { AddRepositoryBody, GetRepositoryItemsRes } from "~/types/api";
+
+import {
+    SwrArg,
+    UseRepositoriesMutationAddArg,
+    UseRepositoriesRes,
+    WithPaginationArg,
+} from "../types";
+import { createSwrKey } from "../utils";
 
 const getBaseKey = () => "/repository/items";
 
-type Query = {
-    page?: number;
-    limit?: number;
-};
-
 export function useRepositories(
-    query: Accessor<Query | undefined>,
-    options?: Options<GetRepositoryItemsRes, unknown>
+    arg: SwrArg<WithPaginationArg>,
+    options?: Options<UseRepositoriesRes, unknown>
 ) {
-    const key = () => {
-        const q = query();
-        if (!q) return undefined;
-        return urlbat(getBaseKey(), q);
-    };
-
-    const swr = useSWR<GetRepositoryItemsRes>(key, options);
+    const swr = useSWR<UseRepositoriesRes>(createSwrKey(getBaseKey(), arg), options);
 
     return swr;
 }
@@ -30,7 +24,7 @@ export function useRepositories(
 export function useRepositoriesMutation() {
     const add = useSWRMutation(
         key => key.startsWith(getBaseKey()),
-        (arg: AddRepositoryBody) => axios.post("/repository/add", arg)
+        (arg: UseRepositoriesMutationAddArg) => axios.post("/repository/add", arg)
     );
 
     return { add };

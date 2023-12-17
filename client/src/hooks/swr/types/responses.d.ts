@@ -1,6 +1,6 @@
-import { PaginationDto, ReleaseAssetDto, ReleaseDto, RepositoryDto } from "../dtos";
+import { PaginationDto, ReleaseAssetDto, ReleaseDto, RepositoryDto } from "~/types/dtos";
 
-export type GetRepositoryItemsRes = PaginationDto<
+export type UseRepositoriesRes = PaginationDto<
     (RepositoryDto & {
         Releases:
             | (ReleaseDto & {
@@ -10,10 +10,12 @@ export type GetRepositoryItemsRes = PaginationDto<
     })[]
 >;
 
-export type GetGithubRepositoriesRes = {
+export type UseGithubRepositoriesRes = {
     Items:
         | {
               Name: string;
           }[]
         | null;
 };
+
+export type UseRepositoryRes = RepositoryDto;

@@ -12,6 +12,7 @@ func AddRoutes(e *echo.Echo) {
 
 	v1.POST("/repository/add", v1_repository.Add)
 	v1.GET("/repository/items", v1_repository.Items)
+	v1.GET("/repository/:name", v1_repository.ParamName)
 
 	v1.GET("/github/repository/search", v1_github_repository.Search)
 }
