@@ -11,6 +11,7 @@
         "@solid-primitives/event-listener": "2.3.0",
         "@solid-primitives/refs": "1.0.5",
         "@solidjs/router": "0.10.1",
+        "@tabler/icons-solidjs": "2.44.0",
         "clsx": "2.0.0",
         "solid-controlled-input": "2.1.0",
         "solid-js": "1.8.7",

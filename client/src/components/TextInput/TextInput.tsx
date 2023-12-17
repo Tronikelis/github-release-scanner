@@ -11,8 +11,7 @@ const input = tv({
     base: [
         "w-full placeholder-gray-500 rounded-lg border border-gray-200 px-5 py-2.5",
         "text-gray-700 focus-within:border-blue-400 focus-within:outline-none",
-        "focus-within:ring focus-within:ring-blue-300 focus-within:ring-opacity-40",
-        "border-gray-600 text-gray-300 focus-within:border-blue-300 bg-transparent",
+        "border-gray-600 text-gray-300 bg-transparent",
     ],
 });
 
