@@ -39,7 +39,7 @@ func releases(c echo.Context) error {
 		InitQuery(db).
 		Model(&releases).
 		Relation("Repository").
-		Where("repositories.name = ?", requestParams.Name).
+		Where("repository.name = ?", requestParams.Name).
 		ScanAndCount(ctx)
 
 	if err != nil && err != sql.ErrNoRows {
