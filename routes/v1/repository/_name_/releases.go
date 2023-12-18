@@ -37,7 +37,6 @@ func releases(c echo.Context) error {
 
 	totalRows, err := pagination.
 		InitQuery(db).
-		NewSelect().
 		Model(&releases).
 		Relation("Repository").
 		Where("repositories.name = ?", requestParams.Name).
