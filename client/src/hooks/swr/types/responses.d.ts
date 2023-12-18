@@ -19,3 +19,10 @@ export type UseGithubRepositoriesRes = {
 };
 
 export type UseRepositoryRes = RepositoryDto;
+
+export type UseRepositoryReleasesRes = PaginationDto<
+    (ReleaseDto & {
+        Repository: RepositoryDto;
+        ReleaseAssets: ReleaseAssetDto[] | null;
+    })[]
+>;

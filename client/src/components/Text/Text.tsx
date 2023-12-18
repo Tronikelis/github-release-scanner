@@ -29,6 +29,10 @@ const text = tv({
             xl5: "text-5xl",
             xl6: "text-6xl",
         },
+        color: {
+            success: "text-green-400",
+            error: "text-red-400",
+        },
     },
 });
 
@@ -47,6 +51,7 @@ const Text: FlowComponent<Props> = props => {
         "isTruncated",
         "size",
         "isLink",
+        "color",
     ]);
 
     const tv = (): Parameters<typeof text>[number] => ({
@@ -57,6 +62,7 @@ const Text: FlowComponent<Props> = props => {
         isTruncated: local.isTruncated,
         size: local.size,
         isLink: local.isLink,
+        color: local.color,
     });
 
     return (

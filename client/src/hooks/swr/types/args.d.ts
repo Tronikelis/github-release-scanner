@@ -9,3 +9,7 @@ export type UseRepositoriesMutationAddArg = {
 export type UseRepositoryArg = {
     name: string;
 };
+
+export type UseRepositoryReleasesArg = {
+    name: string;
+};
