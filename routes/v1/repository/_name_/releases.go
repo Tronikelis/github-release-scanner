@@ -7,8 +7,8 @@ import (
 	"github-release-scanner/constants"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
-	utils_http "github-release-scanner/utils/http"
-	"github-release-scanner/utils/pagination"
+	"github-release-scanner/utils/req"
+	"github-release-scanner/utils/req/pagination"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -23,19 +23,13 @@ func releases(c echo.Context) error {
 	db := c.(*context.Context).DB
 
 	requestQuery := requestQuery{}
-	if err := c.Bind(&requestQuery); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
 	requestParams := RequestParams{}
-	if err := c.Bind(&requestParams); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
 
-	if err := utils_http.UnescapeQueryStruct(&requestParams); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+	if err := req.BindAndUnescape(c, &requestQuery); err != nil {
+		return req.EchoBadRequest(err)
 	}
-	if err := utils_http.UnescapeQueryStruct(&requestQuery); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+	if err := req.BindAndUnescape(c, &requestParams); err != nil {
+		return req.EchoBadRequest(err)
 	}
 
 	pagination := pagination.New(requestQuery.Page, requestQuery.Limit)

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
-	utils_http "github-release-scanner/utils/http"
+	"github-release-scanner/utils/req"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,12 +16,8 @@ func index(c echo.Context) error {
 	db := c.(*context.Context).DB
 
 	requestParams := RequestParams{}
-	if err := c.Bind(&requestParams); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	if err := utils_http.UnescapeQueryStruct(&requestParams); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+	if err := req.BindAndUnescape(c, &requestParams); err != nil {
+		return req.EchoBadRequest(err)
 	}
 
 	repository := models.Repository{}

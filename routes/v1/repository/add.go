@@ -4,6 +4,7 @@ import (
 	ctx "context"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
+	"github-release-scanner/utils/req"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -20,7 +21,7 @@ func add(c echo.Context) error {
 
 	requestBody := requestBody{}
 	if err := c.Bind(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return req.EchoBadRequest(err)
 	}
 
 	rawRepo, err := apiClients.GhClient.GetRepo(requestBody.Name)

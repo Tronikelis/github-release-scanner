@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github-release-scanner/context"
-	utils_http "github-release-scanner/utils/http"
+	"github-release-scanner/utils/req"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -23,12 +23,8 @@ func search(c echo.Context) error {
 	ghClient := c.(*context.Context).ApiClients.GhClient
 
 	requestQuery := requestQuery{}
-	if err := c.Bind(&requestQuery); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	if err := utils_http.UnescapeQueryStruct(&requestQuery); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+	if err := req.BindAndUnescape(c, &requestQuery); err != nil {
+		return req.EchoBadRequest(err)
 	}
 
 	if requestQuery.Name == "" {
@@ -37,7 +33,7 @@ func search(c echo.Context) error {
 
 	repos, err := ghClient.GetRepos(requestQuery.Name)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return req.EchoBadRequest(err)
 	}
 
 	response := response{}
