@@ -11,15 +11,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type requestParams struct {
-	Name string `param:"name"`
-}
-
 func index(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 
-	requestParams := requestParams{}
+	requestParams := RequestParams{}
 	if err := c.Bind(&requestParams); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
@@ -35,7 +31,6 @@ func index(c echo.Context) error {
 		Model(&repository).
 		Where("name = ?", requestParams.Name).
 		Scan(ctx); err != nil {
-
 		if err == sql.ErrNoRows {
 			return echo.NewHTTPError(http.StatusNotFound, "repo was not found")
 		}

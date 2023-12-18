@@ -1,8 +1,9 @@
-package repository
+package _name_
 
 import (
 	ctx "context"
 	"database/sql"
+
 	"github-release-scanner/constants"
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
@@ -11,14 +12,13 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/uptrace/bun"
 )
 
 type requestQuery struct {
 	constants.PaginationQuery
 }
 
-func items(c echo.Context) error {
+func releases(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 
@@ -26,28 +26,34 @@ func items(c echo.Context) error {
 	if err := c.Bind(&requestQuery); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
+	requestParams := RequestParams{}
+	if err := c.Bind(&requestParams); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
 
+	if err := utils_http.UnescapeQueryStruct(&requestParams); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
 	if err := utils_http.UnescapeQueryStruct(&requestQuery); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	pagination := pagination.New(requestQuery.Page, requestQuery.Limit)
-	repositories := []models.Repository{}
+	releases := []models.Release{}
 
 	totalRows, err := pagination.
 		InitQuery(db).
-		Model(&repositories).
-		Relation("Releases", func(sq *bun.SelectQuery) *bun.SelectQuery {
-			return sq.DistinctOn("repository_id").Order("repository_id desc", "id desc")
-		}).
-		Relation("Releases.ReleaseAssets").
+		NewSelect().
+		Model(&releases).
+		Relation("Repository").
+		Where("repositories.name = ?", requestParams.Name).
 		ScanAndCount(ctx)
 
 	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
-	pagination.SetRows(repositories).SetTotalRows(uint(totalRows))
+	pagination.SetRows(releases).SetTotalRows(uint(totalRows))
 
 	return c.JSON(http.StatusOK, pagination)
 }

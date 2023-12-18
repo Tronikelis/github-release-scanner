@@ -1,6 +1,10 @@
 package pagination
 
-import "math"
+import (
+	"math"
+
+	"github.com/uptrace/bun"
+)
 
 type Pagination struct {
 	Page       uint
@@ -10,7 +14,7 @@ type Pagination struct {
 	Rows       interface{}
 }
 
-func New(page uint, limit uint, totalRows uint) Pagination {
+func New(page uint, limit uint) Pagination {
 	if limit == 0 {
 		limit = 25
 	}
@@ -19,20 +23,29 @@ func New(page uint, limit uint, totalRows uint) Pagination {
 		limit = 50
 	}
 
-	totalPages := uint(math.Ceil(float64(totalRows) / float64(limit)))
-
 	return Pagination{
-		TotalRows:  totalRows,
-		Limit:      limit,
-		Page:       page,
-		TotalPages: totalPages,
+		Limit: limit,
+		Page:  page,
 	}
 }
 
-func (pagination *Pagination) GetOffset() uint {
+func (pagination Pagination) getOffset() uint {
 	return pagination.Page * pagination.Limit
 }
 
-func (pagination *Pagination) SetRows(rows interface{}) {
+func (pagination *Pagination) SetRows(rows interface{}) *Pagination {
 	pagination.Rows = rows
+
+	return pagination
+}
+
+func (pagination *Pagination) SetTotalRows(totalRows uint) *Pagination {
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = uint(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+
+	return pagination
+}
+
+func (pagination Pagination) InitQuery(db *bun.DB) *bun.SelectQuery {
+	return db.NewSelect().Offset(int(pagination.getOffset())).Limit(int(pagination.Limit)).Order("id desc")
 }
