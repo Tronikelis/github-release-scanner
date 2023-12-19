@@ -16,7 +16,9 @@ type Props = {
 export default function RepoReleases(props: ForbidChildren<Props>) {
     const [page, setPage] = usePage([]);
 
-    const { data } = useRepositoryReleases(() => ({ name: props.repoName, page: page() }));
+    const { data } = useRepositoryReleases(() => ({ name: props.repoName, page: page() }), {
+        refreshInterval: 5e3,
+    });
 
     const getColor = (positives: number | null): ComponentProps<typeof Text>["color"] => {
         if (typeof positives !== "number") return;

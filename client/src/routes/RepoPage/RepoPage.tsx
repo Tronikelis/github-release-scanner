@@ -1,12 +1,12 @@
 import { IconBrandGithub } from "@tabler/icons-solidjs";
 
+import FormattedDate from "~/components/_custom/FormattedDate";
 import Group from "~/components/Group";
 import Paper from "~/components/Paper";
 import Stack from "~/components/Stack";
 import Text from "~/components/Text";
 import { useRepository } from "~/hooks/swr/repository";
 import useDecodedParams from "~/hooks/useDecodedParams";
-import { formatDate } from "~/utils";
 
 import RepoReleases from "./RepoReleases";
 
@@ -38,7 +38,7 @@ export default function RepoPage() {
                     </Text>
 
                     <Text isDimmed isItalic class="ml-auto">
-                        Tracking since {formatDate(data()?.CreatedAt, true)} ago
+                        Tracking since <FormattedDate date={data()?.CreatedAt} timeAgo /> ago
                     </Text>
                 </Group>
             </Paper>
