@@ -1,6 +1,7 @@
 import { ComponentProps, For } from "solid-js";
 
 import Group from "~/components/Group";
+import Loader from "~/components/Loader";
 import Pagination from "~/components/Pagination";
 import Paper from "~/components/Paper";
 import Stack from "~/components/Stack";
@@ -42,12 +43,26 @@ export default function RepoReleases(props: ForbidChildren<Props>) {
                                 <For each={item.ReleaseAssets}>
                                     {asset => (
                                         <Group>
-                                            <Text color={getColor(asset.Positives)}>
-                                                {asset.Positives ?? "?"}
-                                            </Text>
+                                            {!asset.VtFinished ? (
+                                                <Loader />
+                                            ) : (
+                                                <Text
+                                                    color={getColor(asset.Positives)}
+                                                    isUnderlined
+                                                >
+                                                    <a
+                                                        target="_blank"
+                                                        href={asset.VtLink || ""}
+                                                    >
+                                                        {asset.Positives}
+                                                    </a>
+                                                </Text>
+                                            )}
 
-                                            <Text isDimmed size="sm">
-                                                {asset.Name}
+                                            <Text isDimmed isUnderlined size="sm">
+                                                <a target="_blank" href={asset.GhDownloadUrl}>
+                                                    {asset.Name}
+                                                </a>
                                             </Text>
                                         </Group>
                                     )}
