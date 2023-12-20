@@ -119,5 +119,7 @@ func (client VirusTotalApiClient) CheckMaliciousCount(analysisID string) (uint, 
 		return 0, false, nil
 	}
 
-	return uint(data.Data.Attributes.Stats.Malicious), true, nil
+	return uint(
+		data.Data.Attributes.Stats.Malicious +
+			data.Data.Attributes.Stats.Suspicious), true, nil
 }
