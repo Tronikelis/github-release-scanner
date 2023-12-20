@@ -26,10 +26,10 @@ export default function AddRepository(_props: ForbidChildren) {
     const { add } = useRepositoriesMutation();
 
     const handleAdd = async () => {
-        if (!repo()) return;
+        if (!repo() && !repoName()) return;
 
         try {
-            await add.trigger({ name: repo() });
+            await add.trigger({ name: repo() || repoName() });
             add.populateCache();
             setRepo("");
         } catch (err: unknown) {
