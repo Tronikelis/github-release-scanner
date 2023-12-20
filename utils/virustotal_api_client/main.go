@@ -95,7 +95,7 @@ func (client VirusTotalApiClient) UploadFile(filePath string) (*string, error) {
 	return &data.Data.ID, nil
 }
 
-func (client VirusTotalApiClient) CheckAnalysis(analysisID string) (uint, bool, error) {
+func (client VirusTotalApiClient) CheckMaliciousCount(analysisID string) (uint, bool, error) {
 	client.throttleFast.TryAndWait()
 
 	resp, err := grequests.Get(client.baseUrl+"/analyses/"+analysisID, &grequests.RequestOptions{
@@ -119,5 +119,5 @@ func (client VirusTotalApiClient) CheckAnalysis(analysisID string) (uint, bool, 
 		return 0, false, nil
 	}
 
-	return uint(data.Data.Attributes.Stats.Harmless), true, nil
+	return uint(data.Data.Attributes.Stats.Malicious), true, nil
 }

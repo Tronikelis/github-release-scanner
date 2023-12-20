@@ -18,7 +18,7 @@ func checkAssetScan(asset models.ReleaseAsset, db *bun.DB, apiClients *context.A
 
 	ctx := ctx.Background()
 
-	positives, finished, err := apiClients.VtClient.CheckAnalysis(asset.VtId)
+	positives, finished, err := apiClients.VtClient.CheckMaliciousCount(asset.VtId)
 	if err != nil {
 		return err
 	}
