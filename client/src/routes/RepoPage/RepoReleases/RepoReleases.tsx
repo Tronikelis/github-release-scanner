@@ -40,6 +40,12 @@ export default function RepoReleases(props: ForbidChildren<Props>) {
                             </Text>
 
                             <Stack class="gap-1">
+                                {(!item.ReleaseAssets || item.ReleaseAssets.length === 0) && (
+                                    <Text isItalic>
+                                        This release does not have any assets 🤷
+                                    </Text>
+                                )}
+
                                 <For each={item.ReleaseAssets}>
                                     {asset => (
                                         <Group>

@@ -26,7 +26,7 @@ import { tv, VariantProps } from "tailwind-variants";
 import useClickOutside from "~/hooks/useClickOutside";
 
 const dropdown = tv({
-    base: "inset-0 absolute content w-max h-max",
+    base: "inset-0 absolute w-max h-max",
 });
 
 type Props = {

@@ -5,7 +5,7 @@ import { tv, VariantProps } from "tailwind-variants";
 import { ForbidChildren } from "~/types/utils";
 
 const loader = tv({
-    base: "w-8 h-8 animate-spin ",
+    base: "size-8 animate-spin",
 });
 
 type Props = ComponentProps<typeof IconLoader2> & VariantProps<typeof loader>;
