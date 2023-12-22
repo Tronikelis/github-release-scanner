@@ -43,13 +43,11 @@ const TextInput: VoidComponent<Props> = props => {
             <Group class={clsx(input(), "gap-2 flex-nowrap relative")}>
                 {local.leftSection}
 
-                <Group class={clsx("flex-1", local.rightSection && "pr-10")}>
-                    <ControlledInput
-                        type="text"
-                        class="flex-1 outline-none border-none bg-transparent"
-                        {...others}
-                    />
-                </Group>
+                <ControlledInput
+                    type="text"
+                    class="outline-none border-none bg-transparent pr-5 flex-1"
+                    {...others}
+                />
 
                 {local.rightSection && (
                     <div class="w-10 h-full absolute top-0 right-0 bottom-0 flex items-center justify-center">

@@ -12,6 +12,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/uptrace/bun"
 )
 
 type requestQuery struct {
@@ -39,7 +40,9 @@ func releases(c echo.Context) error {
 		InitQuery(db).
 		Model(&releases).
 		Relation("Repository").
-		Relation("ReleaseAssets").
+		Relation("ReleaseAssets", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Order("name asc")
+		}).
 		Where("repository.name = ?", requestParams.Name).
 		ScanAndCount(ctx)
 

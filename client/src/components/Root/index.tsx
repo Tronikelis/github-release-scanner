@@ -19,7 +19,7 @@ const Root: VoidComponent = () => {
                 fetcher: (key, { signal }) => axios.get(key, { signal }).then(x => x.data),
             }}
         >
-            <Toaster />
+            <Toaster position="bottom-center" />
             <Container>
                 <Router>
                     <Route path="/" component={HomePage} />

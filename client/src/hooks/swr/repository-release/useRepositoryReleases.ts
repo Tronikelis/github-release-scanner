@@ -1,15 +1,10 @@
 import useSWR, { Options } from "solid-swr";
 
-import {
-    SwrArg,
-    UseRepositoryReleasesArg,
-    UseRepositoryReleasesRes,
-    WithPaginationArg,
-} from "../types";
+import { SwrArg, UseRepositoryReleasesArg, UseRepositoryReleasesRes } from "../types";
 import { createSwrKey } from "../utils";
 
 export function useRepositoryReleases(
-    arg: SwrArg<WithPaginationArg<UseRepositoryReleasesArg>>,
+    arg: SwrArg<UseRepositoryReleasesArg>,
     options?: Options<UseRepositoryReleasesRes, unknown>
 ) {
     const swr = useSWR<UseRepositoryReleasesRes>(

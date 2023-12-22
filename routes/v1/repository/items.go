@@ -16,6 +16,7 @@ import (
 
 type requestQuery struct {
 	constants.PaginationQuery
+	Search string `query:"search"`
 }
 
 func items(c echo.Context) error {
@@ -30,14 +31,19 @@ func items(c echo.Context) error {
 	pagination := pagination.New(requestQuery.Page, requestQuery.Limit)
 	repositories := []models.Repository{}
 
-	totalRows, err := pagination.
+	query := pagination.
 		InitQuery(db).
 		Model(&repositories).
 		Relation("Releases", func(sq *bun.SelectQuery) *bun.SelectQuery {
 			return sq.DistinctOn("repository_id").Order("repository_id desc", "id desc")
 		}).
-		Relation("Releases.ReleaseAssets").
-		ScanAndCount(ctx)
+		Relation("Releases.ReleaseAssets")
+
+	if requestQuery.Search != "" {
+		query.Where("repository.name ilike ?", "%"+requestQuery.Search+"%")
+	}
+
+	totalRows, err := query.ScanAndCount(ctx)
 
 	if err != nil && err != sql.ErrNoRows {
 		return err

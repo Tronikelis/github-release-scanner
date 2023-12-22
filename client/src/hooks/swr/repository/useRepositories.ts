@@ -4,16 +4,16 @@ import { axios } from "~/classes/Axios";
 
 import {
     SwrArg,
+    UseRepositoriesArg,
     UseRepositoriesMutationAddArg,
     UseRepositoriesRes,
-    WithPaginationArg,
 } from "../types";
 import { createSwrKey } from "../utils";
 
 const getBaseKey = () => "/repository/items";
 
 export function useRepositories(
-    arg: SwrArg<WithPaginationArg>,
+    arg: SwrArg<UseRepositoriesArg>,
     options?: Options<UseRepositoriesRes, unknown>
 ) {
     const swr = useSWR<UseRepositoriesRes>(createSwrKey(getBaseKey(), arg), options);

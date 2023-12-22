@@ -7,14 +7,13 @@ import Loader from "~/components/Loader";
 import Select from "~/components/Select";
 import { useGithubRepositories } from "~/hooks/swr/github";
 import { useRepositoriesMutation } from "~/hooks/swr/repository";
-import useDebounce from "~/hooks/useDebounce";
+import useDebouncedSignal from "~/hooks/useDebouncedSignal";
 import { ForbidChildren } from "~/types/utils";
 
 export default function AddRepository(_props: ForbidChildren) {
     const [repo, setRepo] = createSignal("");
 
-    const [repoName, setRepoName] = createSignal("");
-    const [lazyRepoName] = useDebounce(repoName);
+    const [repoName, setRepoName, lazyRepoName] = useDebouncedSignal("");
 
     const { data: repositories, isLoading } = useGithubRepositories(
         () => ({
@@ -40,7 +39,6 @@ export default function AddRepository(_props: ForbidChildren) {
     return (
         <Group>
             <Select
-                class="lg:min-w-[320px]"
                 value={repo()}
                 setValue={setRepo}
                 items={repositories()?.Items?.map(x => x.Name) || []}

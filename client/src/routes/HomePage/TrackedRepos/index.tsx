@@ -4,23 +4,36 @@ import Group from "~/components/Group";
 import Loader from "~/components/Loader";
 import Pagination from "~/components/Pagination";
 import Stack from "~/components/Stack";
+import TextInput from "~/components/TextInput";
 import { useRepositories } from "~/hooks/swr/repository";
+import useDebouncedSignal from "~/hooks/useDebouncedSignal";
 import usePage from "~/hooks/usePage";
+import useSyncSearchParams from "~/hooks/useSyncSearchParams";
 
 import RepositoryItem from "./RepositoryItem";
 
 export default function TrackedRepos() {
     const [page, setPage] = usePage([]);
 
+    const [search, setSearch, lazySearch] = useDebouncedSignal("");
+    useSyncSearchParams("search", search, setSearch);
+
     const { data, isLoading } = useRepositories(
         () => ({
             page: page(),
+            search: lazySearch(),
         }),
         { refreshInterval: 5e3, keepPreviousData: true }
     );
 
     return (
         <Stack>
+            <TextInput
+                placeholder="Search"
+                value={search()}
+                onInput={e => setSearch(e.target.value)}
+            />
+
             <Group>
                 <Pagination
                     total={data()?.TotalPages || 0}
