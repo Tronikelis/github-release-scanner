@@ -29,8 +29,10 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// native middleware
+
 	if isProd {
 		e.Use(middleware.Recover())
+		e.Use(middleware.Static("./client/dist"))
 	}
 
 	e.Pre(middleware.RemoveTrailingSlash())
