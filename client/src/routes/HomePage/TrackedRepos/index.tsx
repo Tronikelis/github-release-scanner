@@ -13,10 +13,10 @@ import useSyncSearchParams from "~/hooks/useSyncSearchParams";
 import RepositoryItem from "./RepositoryItem";
 
 export default function TrackedRepos() {
-    const [page, setPage] = usePage([]);
-
     const [search, setSearch, lazySearch] = useDebouncedSignal("");
     useSyncSearchParams("search", search, setSearch);
+
+    const [page, setPage] = usePage([lazySearch]);
 
     const { data, isLoading } = useRepositories(
         () => ({

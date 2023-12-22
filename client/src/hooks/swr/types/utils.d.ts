@@ -11,3 +11,15 @@ export type WithPaginationArg<T = undefined> = [T] extends [undefined]
       };
 
 export type SwrArg<T> = Accessor<T | undefined>;
+
+type SwrHook<D, Q> = (query: Accessor<Q>) => {
+    data: Accessor<D>;
+};
+
+export type ExtractSwrData<F extends SwrHook<any, any>> = NonNullable<
+    ReturnType<ReturnType<F>["data"]>
+>;
+
+export type ExtractSwrQuery<F extends SwrHook<any, any>> = NonNullable<
+    ReturnType<NonNullable<Parameters<F>[0]>>
+>;
