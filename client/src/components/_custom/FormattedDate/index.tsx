@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 
 import useInterval from "~/hooks/useInterval";
 import { ForbidChildren } from "~/types/utils";
@@ -11,32 +11,32 @@ type Props = {
 export default function FormattedDate(props: ForbidChildren<Props>) {
     const [date, setDate] = createSignal("");
 
-    useInterval(
-        () => {
-            if (!props.date) return;
+    const update = () => {
+        if (!props.date) return;
 
-            const formatter = new Intl.DateTimeFormat(window.navigator.language, {
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                year: "2-digit",
-            });
+        const formatter = new Intl.DateTimeFormat(window.navigator.language, {
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            year: "2-digit",
+        });
 
-            const date = new Date(props.date);
+        const date = new Date(props.date);
 
-            if (!props.timeAgo) {
-                setDate(formatter.format(date));
-                return;
-            }
+        if (!props.timeAgo) {
+            setDate(formatter.format(date));
+            return;
+        }
 
-            const now = Date.now() / 1e3;
-            const past = date.getTime() / 1e3;
+        const now = Date.now() / 1e3;
+        const past = date.getTime() / 1e3;
 
-            setDate(toTimeAgo(Math.abs(now - past)));
-        },
-        () => 1e3
-    );
+        setDate(toTimeAgo(Math.abs(now - past)));
+    };
+
+    onMount(update);
+    useInterval(update, () => 1e3);
 
     return <>{date()}</>;
 }

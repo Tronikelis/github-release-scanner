@@ -12,7 +12,6 @@ type Release struct {
 
 	ID        uint      `bun:",pk,autoincrement"`
 	CreatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
-	UpdatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 
 	Name string `bun:",nullzero,notnull"`
 	GhID uint   `bun:",nullzero,notnull,unique"`

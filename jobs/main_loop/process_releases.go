@@ -8,30 +8,62 @@ import (
 
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
+	"github-release-scanner/utils/github_api_client"
 
 	"github.com/uptrace/bun"
 )
 
-func createLatestRelease(repository models.Repository, db *bun.DB, apiClients *context.ApiClients) error {
+func createLatestRelease(dbRepo models.Repository, db *bun.DB, apiClients *context.ApiClients) error {
 	ctx := ctx.Background()
 
-	releases, err := apiClients.GhClient.GetRepoReleases(repository.Name)
-	if err != nil {
-		return err
+	ghReleasesChan := make(chan *[]github_api_client.GetRepoReleasesJSON)
+	ghRepoChan := make(chan *github_api_client.GetRepoJSON)
+	requestErrChan := make(chan error)
+
+	go func() {
+		response, err := apiClients.GhClient.GetRepoReleases(dbRepo.Name)
+		requestErrChan <- err
+		ghReleasesChan <- response
+	}()
+	go func() {
+		response, err := apiClients.GhClient.GetRepo(dbRepo.Name)
+		requestErrChan <- err
+		ghRepoChan <- response
+	}()
+
+	for i := 0; i < 2; i++ {
+		if err := <-requestErrChan; err != nil {
+			return err
+		}
 	}
 
-	if len(*releases) < 1 {
+	ghReleases := <-ghReleasesChan
+	ghRepo := <-ghRepoChan
+
+	db.
+		NewUpdate().
+		Model(&models.Repository{
+			ID:          dbRepo.ID,
+			Language:    ghRepo.Language,
+			Stars:       uint(ghRepo.StargazersCount),
+			Description: ghRepo.Description,
+		}).
+		OmitZero().
+		WherePK().
+		Exec(ctx)
+
+	if len(*ghReleases) < 1 {
 		log.Println("no releases skipping")
 		return nil
 	}
 
-	firstGhRelease := (*releases)[0]
+	firstGhRelease := (*ghReleases)[0]
 
 	releaseModel := models.Release{
 		Name:         firstGhRelease.Name,
 		GhID:         firstGhRelease.ID,
 		Description:  firstGhRelease.Body,
-		RepositoryID: repository.ID,
+		RepositoryID: dbRepo.ID,
 	}
 
 	lastRelease := models.Release{}

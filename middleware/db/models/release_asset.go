@@ -12,7 +12,6 @@ type ReleaseAsset struct {
 
 	ID        uint      `bun:",pk,autoincrement"`
 	CreatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
-	UpdatedAt time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 
 	GhID          uint   `bun:",unique,nullzero,notnull"`
 	GhDownloadUrl string `bun:",nullzero,notnull"`

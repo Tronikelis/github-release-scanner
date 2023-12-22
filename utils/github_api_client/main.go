@@ -83,6 +83,7 @@ func (client GithubApiClient) GetRepos(name string) (*GetReposJSON, error) {
 
 	params := url.Values{}
 	params.Set("q", name)
+	params.Set("sort", "stars")
 
 	querystring := params.Encode()
 	if querystring != "" {

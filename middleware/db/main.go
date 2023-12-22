@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"github-release-scanner/context"
-	"github-release-scanner/middleware/db/models"
+	"github-release-scanner/middleware/db/migrations"
 	"log"
 	"os"
 
@@ -11,6 +11,7 @@ import (
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
 	"github.com/uptrace/bun/extra/bundebug"
+	"github.com/uptrace/bun/migrate"
 
 	ctx "context"
 
@@ -18,6 +19,8 @@ import (
 )
 
 func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
+	ctx := ctx.Background()
+
 	dsn := "postgres://" +
 		os.Getenv("DB_USER") +
 		":" + os.Getenv("DB_PASSWORD") +
@@ -36,31 +39,17 @@ func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.Handl
 	sqlDB.SetMaxOpenConns(10)
 
 	db := bun.NewDB(sqlDB, pgdialect.New())
-
 	db.AddQueryHook(bundebug.NewQueryHook())
 
-	ctx := ctx.Background()
+	migrator := migrate.NewMigrator(db, migrations.Migrations)
+	migrator.Init(ctx)
 
-	if _, err := db.NewCreateTable().
-		Model(&models.Repository{}).
-		IfNotExists().
-		Exec(ctx); err != nil {
-		log.Fatalln(err)
+	group, err := migrator.Migrate(ctx)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	if _, err := db.
-		NewCreateTable().
-		Model(&models.Release{}).
-		IfNotExists().
-		Exec(ctx); err != nil {
-		log.Fatalln(err)
-	}
-
-	if _, err := db.NewCreateTable().
-		Model(&models.ReleaseAsset{}).
-		IfNotExists().
-		Exec(ctx); err != nil {
-		log.Fatalln(err)
+	if group.ID == 0 {
+		log.Println("no migrations to run")
 	}
 
 	return db, func(next echo.HandlerFunc) echo.HandlerFunc {
