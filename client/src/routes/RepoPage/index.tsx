@@ -1,6 +1,7 @@
 import { IconBrandGithub } from "@tabler/icons-solidjs";
 
 import FormattedDate from "~/components/_custom/FormattedDate";
+import TitleWithPrefix from "~/components/_custom/TitleWithPrefix";
 import Group from "~/components/Group";
 import Paper from "~/components/Paper";
 import Stack from "~/components/Stack";
@@ -22,6 +23,8 @@ export default function RepoPage() {
 
     return (
         <Stack class="gap-8">
+            <TitleWithPrefix text={data()?.Name || ""} />
+
             <Paper>
                 <Group class="flex-wrap lg:flex-nowrap">
                     <Group class="gap-2">

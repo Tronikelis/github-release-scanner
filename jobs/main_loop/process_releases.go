@@ -62,6 +62,7 @@ func createLatestRelease(dbRepo models.Repository, db *bun.DB, apiClients *conte
 	releaseModel := models.Release{
 		Name:         firstGhRelease.Name,
 		GhID:         firstGhRelease.ID,
+		GhTag:        firstGhRelease.TagName,
 		Description:  firstGhRelease.Body,
 		RepositoryID: dbRepo.ID,
 	}

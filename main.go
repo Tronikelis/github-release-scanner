@@ -32,7 +32,6 @@ func main() {
 	}
 
 	e := echo.New()
-	e.Debug = true
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

@@ -25,16 +25,17 @@ const text = tv({
         size: {
             sm: "text-sm",
             lg: "text-lg",
-            xl: "text-xl",
-            xl2: "text-2xl",
-            xl3: "text-3xl",
-            xl4: "text-4xl",
-            xl5: "text-5xl",
-            xl6: "text-6xl",
+            xl: "text-lg sm:text-xl ",
+            xl2: "text-xl sm:text-2xl",
+            xl3: "text-2xl sm:text-3xl",
+            xl4: "text-3xl sm:text-4xl",
+            xl5: "text-4xl sm:text-5xl",
+            xl6: "text-5xl sm:text-6xl",
         },
         color: {
             success: "text-green-400",
             error: "text-red-400",
+            base: "text-white",
         },
     },
 });

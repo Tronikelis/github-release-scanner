@@ -10,6 +10,7 @@
         "@floating-ui/dom": "1.5.3",
         "@solid-primitives/event-listener": "2.3.0",
         "@solid-primitives/refs": "1.0.5",
+        "@solidjs/meta": "0.29.3",
         "@solidjs/router": "0.10.5",
         "@tabler/icons-solidjs": "2.44.0",
         "clsx": "2.0.0",

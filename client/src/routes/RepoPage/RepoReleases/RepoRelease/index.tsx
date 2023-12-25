@@ -1,4 +1,5 @@
 import { ComponentProps, For } from "solid-js";
+import urlbat from "urlbat";
 
 import Group from "~/components/Group";
 import Loader from "~/components/Loader";
@@ -24,8 +25,16 @@ export default function RepoRelease(props: ForbidChildren<Props>) {
     return (
         <Paper>
             <Stack class="gap-2">
-                <Text size="lg" isTruncated>
-                    {props.release.Name}
+                <Text size="lg" isTruncated isUnderlined>
+                    <a
+                        target="_blank"
+                        href={urlbat(
+                            `https://github.com/${props.release.Repository.Name}/releases/tag/:tag`,
+                            { tag: props.release.GhTag }
+                        )}
+                    >
+                        {props.release.Name}
+                    </a>
                 </Text>
 
                 <Stack class="gap-1">
@@ -36,9 +45,9 @@ export default function RepoRelease(props: ForbidChildren<Props>) {
 
                     <For each={props.release.ReleaseAssets}>
                         {asset => (
-                            <Group class="*:hover:opacity-60">
+                            <Group>
                                 {!asset.VtFinished ? (
-                                    <Loader />
+                                    <Loader size="sm" />
                                 ) : (
                                     <Text color={getColor(asset.Positives)} isUnderlined>
                                         <a target="_blank" href={asset.VtLink || ""}>

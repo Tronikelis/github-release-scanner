@@ -4,7 +4,7 @@ export type ReleaseDto = {
     UpdatedAt: string;
     Name: string;
     GhID: number;
+    GhTag: string;
     RepositoryID: number;
-
-    Description: string | null;
+    Description: string;
 };
