@@ -4,9 +4,7 @@ WORKDIR /app
 COPY . .
 WORKDIR /app/client
 
-RUN npm ci && npm run build
-
-RUN rm -rf node_modules
+RUN npm ci && npm run build && rm -rf node_modules
 
 
 

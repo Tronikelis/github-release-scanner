@@ -21,17 +21,7 @@ import (
 func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.HandlerFunc) {
 	ctx := ctx.Background()
 
-	dsn := "postgres://" +
-		os.Getenv("DB_USER") +
-		":" + os.Getenv("DB_PASSWORD") +
-		"@" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + "/" +
-		os.Getenv("DB_DBNAME") + "?"
-
-	if isProd {
-		dsn += "sslmode=verify-full"
-	} else {
-		dsn += "sslmode=disable"
-	}
+	dsn := os.Getenv("DATABASE_URL")
 
 	sqlDB := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 

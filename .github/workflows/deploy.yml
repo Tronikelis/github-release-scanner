@@ -1,0 +1,16 @@
+name: "deploy"
+
+on:
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Dokku deploy
+              uses: vitalyliber/dokku-github-action@v7.1
+              env:
+                  PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  HOST: ${{ secrets.SERVER_IP }}
+                  PROJECT: grs
+                  FORCE_DEPLOY: true

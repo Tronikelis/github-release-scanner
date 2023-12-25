@@ -17,11 +17,14 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalln(err)
-	}
-
 	isProd := os.Getenv("APP_ENV") == "production"
+
+	if !isProd {
+		// load from local .env
+		if err := godotenv.Load(); err != nil {
+			log.Fatalln(err)
+		}
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {

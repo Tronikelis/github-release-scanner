@@ -1,6 +1,7 @@
 .env
-temp/
 
+.git/
+temp/
 _priv/
 
 **/dist
