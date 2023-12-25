@@ -72,6 +72,9 @@ func main() {
 
 	routes.AddRoutes(e)
 
+	// any other routes just give back index.html
+	e.File("*", "./client/dist/index.html")
+
 	go main_loop.MainLoop(db, apiClients)
 
 	e.Logger.Fatal(e.Start(":" + port))
