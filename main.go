@@ -23,6 +23,11 @@ func main() {
 
 	isProd := os.Getenv("APP_ENV") == "production"
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatalln("define PORT in env")
+	}
+
 	e := echo.New()
 	e.Debug = true
 
@@ -33,6 +38,14 @@ func main() {
 	if isProd {
 		e.Use(middleware.Recover())
 		e.Use(middleware.Static("./client/dist"))
+		e.Use(middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
+			Skipper: middleware.DefaultSkipper,
+			Store:   middleware.NewRateLimiterMemoryStore(20),
+			IdentifierExtractor: func(ctx echo.Context) (string, error) {
+				id := ctx.RealIP()
+				return id, nil
+			},
+		}))
 	}
 
 	e.Pre(middleware.RemoveTrailingSlash())
@@ -58,5 +71,5 @@ func main() {
 
 	go main_loop.MainLoop(db, apiClients)
 
-	e.Logger.Fatal(e.Start(":3001"))
+	e.Logger.Fatal(e.Start(":" + port))
 }

@@ -1,0 +1,7 @@
+.env
+temp/
+
+_priv/
+
+**/dist
+**/node_modules
