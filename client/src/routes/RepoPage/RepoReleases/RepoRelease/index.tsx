@@ -30,7 +30,7 @@ export default function RepoRelease(props: ForbidChildren<Props>) {
                         target="_blank"
                         href={urlbat(
                             `https://github.com/${props.release.Repository.Name}/releases/tag/:tag`,
-                            { tag: props.release.GhTag }
+                            { tag: props.release.GhTag || "unknown" }
                         )}
                     >
                         {props.release.Name}
