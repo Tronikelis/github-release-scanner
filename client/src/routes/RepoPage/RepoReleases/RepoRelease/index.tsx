@@ -47,13 +47,13 @@ export default function RepoRelease(props: ForbidChildren<Props>) {
                                     </Text>
                                 )}
 
-                                <Text isDimmed isUnderlined size="sm">
+                                <Text isDimmed isUnderlined isTruncated size="sm">
                                     <a target="_blank" href={asset.GhDownloadUrl}>
                                         {asset.Name}
                                     </a>
                                 </Text>
 
-                                <Text class="ml-auto" size="sm" isDimmed>
+                                <Text class="ml-auto whitespace-nowrap" size="sm" isDimmed>
                                     {formatBytes(asset.Size)}
                                 </Text>
                             </Group>
