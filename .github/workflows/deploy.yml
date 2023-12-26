@@ -12,16 +12,14 @@ jobs:
               with:
                   fetch-depth: 0
 
+            - name: webfactory/ssh-agent
+              uses: webfactory/ssh-agent@v0.8.0
+              with:
+                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
             - name: Build image
               run: |
-                  docker image build --tag app/grs:${{ github.sha }} .
+                  docker image build --tag dokku/grs:${{ github.sha }} .
 
-            - name: Dokku
-              uses: dokku/github-action@v1.4.0
-              with:
-                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  branch: master
-                  git_remote_url: ssh://dokku@${{ secrets.SERVER_IP }}:22/grs
-                  deploy_docker_image: app/grs:${{ github.sha }}
-                  trace: "1"
-                  git_push_flags: "-vvv"
+            - name: Deploy image
+              run: docker image save dokku/grs:${{ github.sha }} | ssh dokku@${{ secrets.SERVER_IP }} git:load-image grs dokku/grs:${{ github.sha }}
