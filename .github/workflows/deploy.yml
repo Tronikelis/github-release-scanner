@@ -15,7 +15,7 @@ jobs:
             - name: Build image
               run: |
                   docker image build --tag app/grs:${{ github.sha }} .
-                  docker image save --output app-grs-image.tar
+                  docker image save --output app-grs-image.tar app/grs:${{ github.sha }}
 
             - name: Dokku
               uses: dokku/github-action@v1.4.0
