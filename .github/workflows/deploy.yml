@@ -19,6 +19,7 @@ jobs:
             - name: Dokku
               uses: dokku/github-action@master
               env:
+                  ssh_host_key: ${{ secrets.SSH_HOST_KEY }}
                   ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
                   branch: master
                   git_remote_url: ssh://dokku@165.232.65.116:22/grs
