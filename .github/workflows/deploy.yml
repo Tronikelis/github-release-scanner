@@ -23,3 +23,5 @@ jobs:
                   branch: master
                   git_remote_url: ssh://dokku@${{ secrets.SERVER_IP }}:22/grs
                   deploy_docker_image: app/grs:${{ github.sha }}
+                  trace: "1"
+                  git_push_flags: "-vvv"
