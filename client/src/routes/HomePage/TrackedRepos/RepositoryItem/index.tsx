@@ -35,7 +35,7 @@ export default function RepositoryItem(props: ForbidChildren<Props>) {
                         <IconBrandGithub size={22} />
                     </a>
 
-                    <Text isTruncated isUnderlined>
+                    <Text isTruncated isUnderlinedHover>
                         <a href={urlbat("/repo/:name", { name: props.name })}>{props.name}</a>
                     </Text>
                 </Group>

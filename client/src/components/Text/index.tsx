@@ -22,6 +22,9 @@ const text = tv({
         isUnderlined: {
             true: "underline",
         },
+        isUnderlinedHover: {
+            true: "hover:underline",
+        },
         size: {
             sm: "text-sm",
             lg: "text-lg",
@@ -54,6 +57,7 @@ const Text: FlowComponent<Props> = props => {
         "isDimmed",
         "isTruncated",
         "isUnderlined",
+        "isUnderlinedHover",
         "size",
         "isLink",
         "color",
@@ -69,6 +73,7 @@ const Text: FlowComponent<Props> = props => {
         isLink: local.isLink,
         color: local.color,
         isUnderlined: local.isUnderlined,
+        isUnderlinedHover: local.isUnderlinedHover,
     });
 
     return (
