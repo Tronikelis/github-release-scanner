@@ -12,10 +12,15 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Dokku deploy
-              uses: vitalyliber/dokku-github-action@v7.1
+            - name: Build image
+              run: |
+                  docker image build --tag app/grs:${{ github.sha }} .
+                  docker image save --output app-grs-image.tar
+
+            - name: Dokku
+              uses: dokku/github-action@v1.4.0
               env:
-                  PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-                  HOST: ${{ secrets.SERVER_IP }}
-                  PROJECT: grs
-                  FORCE_DEPLOY: true
+                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  branch: master
+                  git_remote_url: ssh://dokku@${{ secrets.SERVER_IP }}:22/grs
+                  deploy_docker_image: app-grs-image
