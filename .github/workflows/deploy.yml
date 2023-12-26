@@ -22,4 +22,6 @@ jobs:
                   docker image build --tag dokku/grs:${{ github.sha }} .
 
             - name: Deploy image
-              run: docker image save dokku/grs:${{ github.sha }} | ssh dokku@${{ secrets.SERVER_IP }} git:load-image grs dokku/grs:${{ github.sha }}
+              run: |
+                  ssh-keyscan -t rsa ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+                  docker image save dokku/grs:${{ github.sha }} | ssh dokku@${{ secrets.SERVER_IP }} git:load-image grs dokku/grs:${{ github.sha }}
