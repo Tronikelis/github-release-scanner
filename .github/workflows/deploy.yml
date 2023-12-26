@@ -15,7 +15,6 @@ jobs:
             - name: Build image
               run: |
                   docker image build --tag app/grs:${{ github.sha }} .
-                  docker image save --output app-grs-image.tar app/grs:${{ github.sha }}
 
             - name: Dokku
               uses: dokku/github-action@v1.4.0
@@ -23,4 +22,4 @@ jobs:
                   ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
                   branch: master
                   git_remote_url: ssh://dokku@${{ secrets.SERVER_IP }}:22/grs
-                  deploy_docker_image: app-grs-image
+                  deploy_docker_image: app/grs:${{ github.sha }}
