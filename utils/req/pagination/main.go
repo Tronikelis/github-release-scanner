@@ -47,5 +47,5 @@ func (pagination *Pagination) SetTotalRows(totalRows uint) *Pagination {
 }
 
 func (pagination Pagination) InitQuery(db *bun.DB) *bun.SelectQuery {
-	return db.NewSelect().Offset(int(pagination.getOffset())).Limit(int(pagination.Limit)).Order("id desc")
+	return db.NewSelect().Offset(int(pagination.getOffset())).Limit(int(pagination.Limit))
 }

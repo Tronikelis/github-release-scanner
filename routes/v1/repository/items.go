@@ -37,7 +37,8 @@ func items(c echo.Context) error {
 		Relation("Releases", func(sq *bun.SelectQuery) *bun.SelectQuery {
 			return sq.DistinctOn("repository_id").Order("repository_id desc", "gh_id desc")
 		}).
-		Relation("Releases.ReleaseAssets")
+		Relation("Releases.ReleaseAssets").
+		Order("id desc")
 
 	if requestQuery.Search != "" {
 		query.Where("repository.name ilike ?", "%"+requestQuery.Search+"%")
