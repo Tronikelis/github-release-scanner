@@ -28,10 +28,13 @@ export default function RepoPage() {
             <Paper>
                 <Group class="flex-wrap lg:flex-nowrap">
                     <Group class="gap-2">
-                        <a target="_blank" href={`https://github.com/${repoName()}`}>
-                            <IconBrandGithub />
-                        </a>
-                        <Text size="lg">{data()?.Name}</Text>
+                        <IconBrandGithub />
+
+                        <Text size="lg" isUnderlinedHover>
+                            <a target="_blank" href={`https://github.com/${repoName()}`}>
+                                {data()?.Name}
+                            </a>
+                        </Text>
                     </Group>
 
                     <Text>⭐ {data()?.Stars}</Text>

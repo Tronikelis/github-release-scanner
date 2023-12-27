@@ -1,11 +1,13 @@
+import { trackDeep } from "@solid-primitives/deep";
 import {
+    IconAlertTriangle,
     IconBrandGithub,
     IconCircleCheck,
     IconExclamationCircle,
     IconHourglassEmpty,
     IconMoodEmpty,
 } from "@tabler/icons-solidjs";
-import { Match, Switch } from "solid-js";
+import { match, P } from "ts-pattern";
 import urlbat from "urlbat";
 
 import Group from "~/components/Group";
@@ -31,39 +33,40 @@ export default function RepositoryItem(props: ForbidChildren<Props>) {
         <Paper>
             <Stack>
                 <Group class="gap-2">
-                    <a target="_blank" href={`https://github.com/${props.name}`}>
-                        <IconBrandGithub size={22} />
-                    </a>
+                    <IconBrandGithub size={22} />
 
-                    <Text isTruncated isLink>
-                        <a href={urlbat("/repo/:name", { name: props.name })}>{props.name}</a>
+                    <Text isTruncated isUnderlinedHover>
+                        <a target="_blank" href={`https://github.com/${props.name}`}>
+                            {props.name}
+                        </a>
                     </Text>
                 </Group>
 
                 <Group class="gap-2">
-                    <Switch fallback={<IconHourglassEmpty />}>
-                        <Match when={props.releaseAssetCount === 0}>
-                            <IconMoodEmpty />
-                        </Match>
-                        <Match when={props.totalPositives > 0}>
-                            <Text isSpan color="error">
-                                <IconExclamationCircle />
-                            </Text>
-                        </Match>
-                        <Match when={props.isVtFinished && props.totalPositives === 0}>
+                    {match(trackDeep(props))
+                        .with({ releaseAssetCount: 0 }, () => <IconMoodEmpty />)
+                        .with({ isVtFinished: false }, () => <IconHourglassEmpty />)
+                        .with({ totalPositives: 0 }, () => (
                             <Text isSpan color="success">
                                 <IconCircleCheck />
                             </Text>
-                        </Match>
-                    </Switch>
+                        ))
+                        .with({ totalPositives: P.number.between(1, 5) }, () => (
+                            <Text isSpan color="warning">
+                                <IconAlertTriangle />
+                            </Text>
+                        ))
+                        .with({ totalPositives: P.number.gt(5) }, () => (
+                            <Text color="error" isSpan>
+                                <IconExclamationCircle />
+                            </Text>
+                        ))
+                        .otherwise(() => (
+                            <IconHourglassEmpty />
+                        ))}
 
                     <Text size="xl" isTruncated isLink>
-                        <a
-                            href={urlbat("/repo/:name/release/:releaseId", {
-                                name: props.name,
-                                releaseId: props.releaseId,
-                            })}
-                        >
+                        <a href={urlbat("/repo/:name", { name: props.name })}>
                             {props.releaseName}
                         </a>
                     </Text>

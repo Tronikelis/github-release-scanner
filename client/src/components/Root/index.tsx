@@ -13,7 +13,6 @@ import Header from "./Header";
 
 const HomePage = lazy(() => import("~/routes/HomePage"));
 const RepoPage = lazy(() => import("~/routes/RepoPage"));
-const RepoReleasePage = lazy(() => import("~/routes/RepoReleasePage"));
 
 const Root: VoidComponent = () => {
     return (
@@ -34,10 +33,6 @@ const Root: VoidComponent = () => {
                         <Router>
                             <Route path="/" component={HomePage} />
                             <Route path="/repo/:repoName" component={RepoPage} />
-                            <Route
-                                path="/repo/:repoName/release/:releaseId"
-                                component={RepoReleasePage}
-                            />
                         </Router>
                     </Stack>
                 </Container>

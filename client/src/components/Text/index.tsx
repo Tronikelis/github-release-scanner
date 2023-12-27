@@ -38,6 +38,7 @@ const text = tv({
         color: {
             success: "text-green-400",
             error: "text-red-400",
+            warning: "text-orange-400",
             base: "text-white",
         },
     },
