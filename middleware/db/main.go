@@ -29,7 +29,12 @@ func GetMiddleware(isProd bool) (*bun.DB, func(next echo.HandlerFunc) echo.Handl
 	sqlDB.SetMaxOpenConns(10)
 
 	db := bun.NewDB(sqlDB, pgdialect.New())
-	db.AddQueryHook(bundebug.NewQueryHook())
+
+	if isProd {
+		db.AddQueryHook(bundebug.NewQueryHook())
+	} else {
+		db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	}
 
 	migrator := migrate.NewMigrator(db, migrations.Migrations)
 	migrator.Init(ctx)

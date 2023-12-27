@@ -44,6 +44,7 @@ func releases(c echo.Context) error {
 			return sq.Order("name asc")
 		}).
 		Where("repository.name = ?", requestParams.Name).
+		Order("gh_id desc").
 		ScanAndCount(ctx)
 
 	if err != nil && err != sql.ErrNoRows {

@@ -35,7 +35,7 @@ func items(c echo.Context) error {
 		InitQuery(db).
 		Model(&repositories).
 		Relation("Releases", func(sq *bun.SelectQuery) *bun.SelectQuery {
-			return sq.DistinctOn("repository_id").Order("repository_id desc", "id desc")
+			return sq.DistinctOn("repository_id").Order("repository_id desc", "gh_id desc")
 		}).
 		Relation("Releases.ReleaseAssets")
 
