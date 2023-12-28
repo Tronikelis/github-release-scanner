@@ -1,4 +1,4 @@
-import { trackDeep } from "@solid-primitives/deep";
+/* eslint-disable solid/components-return-once */
 import {
     IconAlertTriangle,
     IconBrandGithub,
@@ -7,7 +7,6 @@ import {
     IconHourglassEmpty,
     IconMoodEmpty,
 } from "@tabler/icons-solidjs";
-import { match, P } from "ts-pattern";
 import urlbat from "urlbat";
 
 import Group from "~/components/Group";
@@ -29,6 +28,42 @@ type Props = {
 };
 
 export default function RepositoryItem(props: ForbidChildren<Props>) {
+    const renderIcon = () => {
+        if (props.releaseAssetCount === 0) {
+            return <IconMoodEmpty />;
+        }
+
+        if (!props.isVtFinished) {
+            return <IconHourglassEmpty />;
+        }
+
+        if (props.totalPositives === 0) {
+            return (
+                <Text isSpan color="success">
+                    <IconCircleCheck />
+                </Text>
+            );
+        }
+
+        if (props.totalPositives <= 5) {
+            return (
+                <Text isSpan color="warning">
+                    <IconAlertTriangle />
+                </Text>
+            );
+        }
+
+        if (props.totalPositives > 5) {
+            return (
+                <Text color="error" isSpan>
+                    <IconExclamationCircle />
+                </Text>
+            );
+        }
+
+        return <IconHourglassEmpty />;
+    };
+
     return (
         <Paper>
             <Stack>
@@ -43,27 +78,7 @@ export default function RepositoryItem(props: ForbidChildren<Props>) {
                 </Group>
 
                 <Group class="gap-2">
-                    {match(trackDeep(props))
-                        .with({ releaseAssetCount: 0 }, () => <IconMoodEmpty />)
-                        .with({ isVtFinished: false }, () => <IconHourglassEmpty />)
-                        .with({ totalPositives: 0 }, () => (
-                            <Text isSpan color="success">
-                                <IconCircleCheck />
-                            </Text>
-                        ))
-                        .with({ totalPositives: P.number.between(1, 5) }, () => (
-                            <Text isSpan color="warning">
-                                <IconAlertTriangle />
-                            </Text>
-                        ))
-                        .with({ totalPositives: P.number.gt(5) }, () => (
-                            <Text color="error" isSpan>
-                                <IconExclamationCircle />
-                            </Text>
-                        ))
-                        .otherwise(() => (
-                            <IconHourglassEmpty />
-                        ))}
+                    {renderIcon()}
 
                     <Text size="xl" isTruncated isLink>
                         <a href={urlbat("/repo/:name", { name: props.name })}>
