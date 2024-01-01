@@ -1,4 +1,4 @@
-package repository
+package add
 
 import (
 	ctx "context"
@@ -14,7 +14,7 @@ type requestBody struct {
 	Name string `json:"name"`
 }
 
-func add(c echo.Context) error {
+func Post(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 	apiClients := c.(*context.Context).ApiClients

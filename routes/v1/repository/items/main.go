@@ -1,4 +1,4 @@
-package repository
+package items
 
 import (
 	ctx "context"
@@ -19,7 +19,7 @@ type requestQuery struct {
 	Search string `query:"search"`
 }
 
-func items(c echo.Context) error {
+func Get(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 

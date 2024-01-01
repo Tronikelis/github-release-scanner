@@ -1,13 +1,13 @@
 package github
 
 import (
-	"github-release-scanner/routes/v1/github/repository"
+	"github-release-scanner/routes/v1/github/repository_search"
 
 	"github.com/labstack/echo/v4"
 )
 
-func AddRoutes(group *echo.Group) {
-	toGroup := group.Group("/github")
+func AddRoutes(e *echo.Group) {
+	toGroup := e.Group("/github")
 
-	repository.AddRoutes(toGroup)
+	toGroup.GET("/repository/search", repository_search.Get)
 }
