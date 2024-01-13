@@ -2,15 +2,21 @@ package repository
 
 import (
 	"github-release-scanner/routes/v1/repository/_name_"
+	"github-release-scanner/routes/v1/repository/_name_releases"
+	"github-release-scanner/routes/v1/repository/add"
+	"github-release-scanner/routes/v1/repository/items"
+	"github-release-scanner/routes/v1/repository/releases"
 
 	"github.com/labstack/echo/v4"
 )
 
-func AddRoutes(group *echo.Group) {
-	toGroup := group.Group("/repository")
+func AddRoutes(e *echo.Group) {
+	toGroup := e.Group("/repository")
 
-	toGroup.POST("/add", add)
-	toGroup.GET("/items", items)
+	toGroup.GET("/:name", _name_.Get)
+	toGroup.GET("/:name/releases", _name_releases.Get)
 
-	_name_.AddRoutes(toGroup)
+	toGroup.POST("/add", add.Post)
+	toGroup.GET("/items", items.Get)
+	toGroup.GET("/releases", releases.Get)
 }

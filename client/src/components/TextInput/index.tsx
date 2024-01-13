@@ -45,7 +45,7 @@ const TextInput: VoidComponent<Props> = props => {
 
                 <ControlledInput
                     type="text"
-                    class="outline-none border-none bg-transparent pr-5 flex-1"
+                    class="outline-none border-none bg-transparent pr-5 flex-1 min-w-0 overflow-ellipsis"
                     {...others}
                 />
 

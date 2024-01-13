@@ -1,4 +1,4 @@
-package repository
+package repository_search
 
 import (
 	"github-release-scanner/context"
@@ -19,7 +19,7 @@ type response struct {
 	Items []responseItem
 }
 
-func search(c echo.Context) error {
+func Get(c echo.Context) error {
 	ghClient := c.(*context.Context).ApiClients.GhClient
 
 	requestQuery := requestQuery{}

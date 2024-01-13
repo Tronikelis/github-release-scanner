@@ -7,7 +7,7 @@ import (
 )
 
 func AddRoutes(e *echo.Echo) {
-	toGroup := e.Group("/api")
+	group := e.Group("/api")
 
-	v1.AddRoutes(toGroup)
+	v1.AddRoutes(group)
 }

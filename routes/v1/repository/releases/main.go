@@ -1,4 +1,4 @@
-package _name_
+package releases
 
 import (
 	ctx "context"
@@ -6,13 +6,14 @@ import (
 	"github-release-scanner/context"
 	"github-release-scanner/middleware/db/models"
 	"github-release-scanner/utils/req"
+	"github-release-scanner/utils/req/pagination"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type requestParams struct {
-	Name string `param:"name"`
+	pagination.Pagination
 }
 
 func Get(c echo.Context) error {
@@ -24,19 +25,22 @@ func Get(c echo.Context) error {
 		return req.EchoBadRequest(err)
 	}
 
-	repository := models.Repository{}
+	releases := []models.Release{}
 
-	if err := db.
-		NewSelect().
-		Model(&repository).
-		Where("name = ?", requestParams.Name).
-		Scan(ctx); err != nil {
-		if err == sql.ErrNoRows {
-			return echo.NewHTTPError(http.StatusNotFound, "repo was not found")
-		}
+	pagination := pagination.New(requestParams.Page, requestParams.Limit)
 
+	count, err := pagination.
+		InitQuery(db).
+		Model(&releases).
+		Relation("Repository").
+		Order("id desc").
+		ScanAndCount(ctx)
+
+	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, repository)
+	pagination.SetTotalRows(uint(count)).SetRows(releases)
+
+	return c.JSON(http.StatusOK, pagination)
 }

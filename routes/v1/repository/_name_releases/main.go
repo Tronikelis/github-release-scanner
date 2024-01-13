@@ -1,4 +1,4 @@
-package _name_
+package _name_releases
 
 import (
 	ctx "context"
@@ -15,16 +15,20 @@ import (
 	"github.com/uptrace/bun"
 )
 
+type requestParams struct {
+	Name string `param:"name"`
+}
+
 type requestQuery struct {
 	constants.PaginationQuery
 }
 
-func releases(c echo.Context) error {
+func Get(c echo.Context) error {
 	ctx := ctx.Background()
 	db := c.(*context.Context).DB
 
 	requestQuery := requestQuery{}
-	requestParams := RequestParams{}
+	requestParams := requestParams{}
 
 	if err := req.BindAndUnescape(c, &requestQuery); err != nil {
 		return req.EchoBadRequest(err)
